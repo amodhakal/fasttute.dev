@@ -1,15 +1,17 @@
 "use client";
 
+// Use http://youtube.com/watch?v=0-S5a0eXPoc for testing
+
 import { errorToast } from "@/utils/errorToast";
 import { FormEvent, useState } from "react";
-import toast from "react-hot-toast";
+import { getVideoInformation } from "@/actions/transcripts";
 
 export default function HomePage() {
-  const [url, setUrl] = useState("");
+  const [value, setValue] = useState("");
 
   return (
     <form
-      onSubmit={handleUrlSubmit}
+      onSubmit={handleValueSubmit}
       className="w-screen min-h-screen flex justify-center items-center"
     >
       <div className="flex flex-col gap-4">
@@ -20,11 +22,11 @@ export default function HomePage() {
           Stop scrubbing. Start learning.
         </label>
         <input
-          value={url}
-          onChange={(e) => setUrl(e.target.value)}
+          value={value}
+          onChange={(e) => setValue(e.target.value)}
           type="text"
           name="video"
-          placeholder="https://www.youtube.com/"
+          placeholder="Enter the url or the id of your video"
           className="rounded-xl border border-gray-400 px-4 py-2 w-md"
         />
         <button
@@ -37,20 +39,15 @@ export default function HomePage() {
     </form>
   );
 
-  async function handleUrlSubmit(ev: FormEvent) {
+  async function handleValueSubmit(ev: FormEvent) {
     ev.preventDefault();
-    if (!url) {
-      errorToast("Missing url");
-      setUrl("");
+    const res = await getVideoInformation(value);
+    if (res?.error) {
+      errorToast(res.error);
+      setValue("");
       return;
     }
 
-    try {
-      new URL(url);
-    } catch {
-      errorToast("Invalid url");
-      setUrl("");
-      return;
-    }
+    // TODO Handle youtube url
   }
 }
