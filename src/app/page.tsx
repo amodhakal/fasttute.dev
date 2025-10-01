@@ -1,13 +1,17 @@
 "use client";
 
-// Use http://youtube.com/watch?v=0-S5a0eXPoc for testing
+/** Use http://youtube.com/watch?v=0-S5a0eXPoc for testing  */
 
+import { api } from "@/server/_generated/api";
 import { errorToast } from "@/utils/errorToast";
+import { useAction } from "convex/react";
+import { redirect } from "next/navigation";
+
 import { FormEvent, useState } from "react";
-import { getVideoInformation } from "@/actions/transcripts";
 
 export default function HomePage() {
   const [value, setValue] = useState("");
+  const retrieveVideoInfo = useAction(api.videoInfo.retrieveVideoInfo);
 
   return (
     <form
@@ -40,14 +44,14 @@ export default function HomePage() {
   );
 
   async function handleValueSubmit(ev: FormEvent) {
-    // ev.preventDefault();
-    // const res = await getVideoInformation(value);
-    // if (res?.error) {
-    //   errorToast(res.error);
-    //   setValue("");
-    //   return;
-    // }
+    ev.preventDefault();
+    const { error, id } = await retrieveVideoInfo({ youtubeUrlOrId: value });
+    if (error) {
+      errorToast(error);
+      setValue("");
+      return;
+    }
 
-    // TODO Handle youtube url
+    redirect(`/video/${id}`);
   }
 }
