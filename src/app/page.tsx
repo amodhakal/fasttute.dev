@@ -31,7 +31,7 @@ export default function HomePage() {
         />
         <button
           type="submit"
-          className="rounded-xl text-white bg-green-600 px-4 py-2 w-md"
+          className="rounded-xl text-white px-4 py-2 w-md bg-green-600 hover:cursor-pointer hover:bg-green-500 active:bg-green-700"
         >
           Submit
         </button>
@@ -40,13 +40,13 @@ export default function HomePage() {
   );
 
   async function handleValueSubmit(ev: FormEvent) {
-    ev.preventDefault();
-    const res = await getVideoInformation(value);
-    if (res?.error) {
-      errorToast(res.error);
-      setValue("");
-      return;
-    }
+    // ev.preventDefault();
+    // const res = await getVideoInformation(value);
+    // if (res?.error) {
+    //   errorToast(res.error);
+    //   setValue("");
+    //   return;
+    // }
 
     // TODO Handle youtube url
   }
