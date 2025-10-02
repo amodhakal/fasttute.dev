@@ -7,7 +7,7 @@ Phase 0: The Foundation (The Non-AI Core) [Build a tool that is useful even with
   ✔ A clean, responsive UI. @done(25-10-01 21:25)
 
 Phase 1: The First Spark of Magic (Core AI Feature) [Integrate AI to solve the single biggest navigation problem: lack of structure]:
-  ☐ A backend API endpoint that takes a transcript.
+  ✔ A backend API endpoint that takes a transcript. @done(25-10-02 02:06)
   ☐ The API calls an LLM with a prompt to generate a JSON object of detailed chapter markers.
   ☐ The generated chapters are displayed on the frontend, allowing for one-click navigation.
   ☐ Results are cached to avoid redundant API calls for the same video.
@@ -22,3 +22,7 @@ Phase 3: The Growth Engine (Product-Led Growth) [Turn users into evangelists. Bu
   ☐ The shared page shows the full enhanced experience to non-users, with a clear CTA to sign up.
     - If the user is not signed up, show the CTA
   ☐ A browser extension that allows users to enhance a video with one click directly from YouTube.
+
+
+Additional:
+  ☐ Update the video shower to use the youtube id, such that when getting back to homepage, the video can be processed with it

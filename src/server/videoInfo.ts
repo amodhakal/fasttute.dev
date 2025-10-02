@@ -2,10 +2,10 @@
  * Based on https://github.com/youtube-transcript-plus/youtube-transcript-api
  */
 
-import { v, GenericId } from "convex/values";
+import { v } from "convex/values";
 import { mutation, query } from "./_generated/server";
 // No need to import `Id` here; handler will accept either an Id or string.
-import { vTranscript } from "./schema";
+import { vStatus, vTranscript } from "./schema";
 import { Id } from "./_generated/dataModel";
 
 export const getIdFromYoutubeId = query({
@@ -49,8 +49,16 @@ export const insertVideoInfo = mutation({
       youtubeId,
       title,
       transcript,
+      status: "pending",
     });
 
     return newVideoId;
+  },
+});
+
+export const updateStatus = mutation({
+  args: { id: v.id<"video_info">("video_info"), status: vStatus() },
+  handler: async (ctx, { id, status }) => {
+    await ctx.db.patch(id, { status });
   },
 });
