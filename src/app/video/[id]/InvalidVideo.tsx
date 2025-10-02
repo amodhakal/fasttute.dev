@@ -2,7 +2,7 @@
 
 import { useRouter } from "next/navigation";
 
-export default function InvalidVideo({ id }: { id: string }) {
+export default function InvalidVideo({ id }: { id: string | undefined }) {
   const router = useRouter();
 
   return (

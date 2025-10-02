@@ -22,9 +22,13 @@ export const getIdFromYoutubeId = query({
 
 export const getVideo = query({
   args: {
-    id: v.string(),
+    id: v.optional(v.string()),
   },
   handler: async (ctx, { id }) => {
+    if (!id) {
+      return null;
+    }
+
     try {
       const foundVideo = await ctx.db.get(id as Id<"video_info">);
       return foundVideo;
