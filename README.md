@@ -2,7 +2,7 @@
 
 Stop scrubbing. Start learning.
 
-Fastiture transforms passive YouTube tutorials into active, efficient learning environments. It's a tool built to fix the broken experience of learning complex technical topics from video.
+Fasttute transforms passive YouTube tutorials into active, efficient learning environments. It's a tool built to fix the broken experience of learning complex technical topics from video.
 
 ## The Pain
 
@@ -17,7 +17,7 @@ This is a waste of time and a massive barrier to effective learning.
 
 ## The Solution
 
-Fastiture is a web application that takes a YouTube URL and generates an interactive, AI-powered learning session. It provides:
+Fasttute is a web application that takes a YouTube URL and generates an interactive, AI-powered learning session. It provides:
 
 - **A time-synced transcript** that lets you read along and click to jump to any point in the video.
 - **AI-generated chapter markers** that structure the video and make navigation effortless.
