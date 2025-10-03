@@ -5,8 +5,8 @@
 import { v } from "convex/values";
 import { mutation, query } from "./_generated/server";
 // No need to import `Id` here; handler will accept either an Id or string.
-import { vStatus, vTranscript } from "./schema";
 import { Id } from "./_generated/dataModel";
+import { vChapters, vStatus, vTranscript } from "./schema";
 
 export const getIdFromYoutubeId = query({
   args: { youtubeId: v.string() },
@@ -60,5 +60,16 @@ export const updateStatus = mutation({
   args: { id: v.id<"video_info">("video_info"), status: vStatus() },
   handler: async (ctx, { id, status }) => {
     await ctx.db.patch(id, { status });
+  },
+});
+
+export const updateWithNewValues = mutation({
+  args: {
+    id: v.id<"video_info">("video_info"),
+    status: vStatus(),
+    chapters: vChapters(),
+  },
+  handler: async (ctx, { id, status, chapters }) => {
+    await ctx.db.patch(id, { status, chapters });
   },
 });

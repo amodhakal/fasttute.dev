@@ -10,15 +10,6 @@ export const vTranscript = () =>
     })
   );
 
-export const vCleanedTranscript = () =>
-  v.array(
-    v.object({
-      text: v.string(),
-      startSec: v.number(),
-      endSec: v.number(),
-    })
-  );
-
 export const vChapters = () =>
   v.array(
     v.object({
@@ -40,7 +31,6 @@ const video_info = defineTable({
   transcript: vTranscript(),
   status: vStatus(),
   chapters: v.optional(vChapters()),
-  vCleanedTranscript: v.optional(vCleanedTranscript()),
 }).index("by_youtubeId", ["youtubeId"]);
 
 export default defineSchema({
