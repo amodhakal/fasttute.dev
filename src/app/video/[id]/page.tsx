@@ -8,6 +8,8 @@ import { useParams } from "next/navigation";
 import { useState, useEffect, useRef } from "react";
 import InvalidVideo from "./InvalidVideo";
 import TranscriptItem from "./TranscriptItem";
+import NormalSidebar from "./NormalSidebar";
+import CompletedSidebar from "./CompletedSidebar";
 
 export default function VideoPage() {
   const [startTime, setStartTime] = useState(0);
@@ -49,22 +51,18 @@ export default function VideoPage() {
 
         <div className="md:relative md:col-span-1">
           <div className="md:absolute inset-0 overflow-y-auto flex flex-col gap-2">
-            {video.transcript.map((transcriptItem) => (
-              <TranscriptItem
-                key={crypto.randomUUID()}
-                transcriptItem={transcriptItem}
-                startTime={startTime}
-                setStartTime={setStartTime}
-                onSeek={(secs: number) => {
-                  const p = playerRef.current;
-                  if (p && typeof p.seekTo === "function") {
-                    try {
-                      p.seekTo(secs, true);
-                    } catch {}
-                  }
-                }}
-              />
-            ))}
+            <NormalSidebar
+              video={video}
+              startTime={startTime}
+              setStartTime={setStartTime}
+              playerRef={playerRef}
+            />
+            <CompletedSidebar
+              video={video}
+              startTime={startTime}
+              setStartTime={setStartTime}
+              playerRef={playerRef}
+            />
           </div>
         </div>
       </div>
@@ -72,7 +70,7 @@ export default function VideoPage() {
   );
 }
 
-type YTPlayer = {
+export type YTPlayer = {
   seekTo?: (seconds: number, allowSeekAhead?: boolean) => void;
   getCurrentTime?: () => number;
   destroy?: () => void;

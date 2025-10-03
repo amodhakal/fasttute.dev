@@ -1,4 +1,3 @@
-
 Phase 0: The Foundation (The Non-AI Core) [Build a tool that is useful even without any AI. Prove the core user experience is solid]:
   ✔ A single input field to accept a YouTube URL. @done(25-10-01 21:25)
   ✔ An embedded video player next to a scrollable transcript. @done(25-10-01 21:25)
@@ -10,7 +9,7 @@ Phase 1: The First Spark of Magic (Core AI Feature) [Integrate AI to solve the s
   ✔ A backend API endpoint that takes a transcript. @done(25-10-02 02:06)
   ✔ Results are cached to avoid redundant API calls for the same video. @done(25-10-03 00:06)
   ✔ The API calls an LLM with a prompt to generate a JSON object of detailed chapter markers. @done(25-10-03 00:26)
-  ☐ The generated chapters are displayed on the frontend, allowing for one-click navigation.
+  ✔ The generated chapters are displayed on the frontend, allowing for one-click navigation. @done(25-10-03 16:27)
 
 Phase 2: The Retention Engine (Building the Asset) [Give users a reason to come back. Transform the tool from a one-off gadget into a personal library]:
   ☐ Implement user authentication with Clerk.
@@ -25,10 +24,7 @@ Phase 3: The Growth Engine (Product-Led Growth) [Turn users into evangelists. Bu
 
 
 Additional:
+  ☐ Verify that all of the chapter's offset does match the transcript's offset
   ☐ Update the video shower to use the youtube id, such that when getting back to homepage, the video can be processed with it
     - or get the youtube id from the video id status
-  ☐ Implement event handling
-    - Let the user know that it hasn't been optimized if in pending
-    - When an error or ai processing occurs, let the frontend page for that video know and do the correct thing.
-    – When a video isn't AI processed, show the w/o AI processed and let the viewer know they can generate a better one
-      - Should be restricted to the owner later on.
+      

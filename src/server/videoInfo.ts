@@ -48,7 +48,10 @@ export const insertVideoInfo = mutation({
     const newVideoId = await ctx.db.insert("video_info", {
       youtubeId,
       title,
-      transcript,
+      transcript: transcript.map((item) => ({
+        ...item,
+        offset: Math.floor(item.offset),
+      })),
       status: "pending",
     });
 
@@ -70,6 +73,12 @@ export const updateWithNewValues = mutation({
     chapters: vChapters(),
   },
   handler: async (ctx, { id, status, chapters }) => {
-    await ctx.db.patch(id, { status, chapters });
+    await ctx.db.patch(id, {
+      status,
+      chapters: chapters.map((item) => ({
+        ...item,
+        offset: Math.floor(item.offset),
+      })),
+    });
   },
 });
