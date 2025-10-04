@@ -25,6 +25,6 @@ Phase 3: The Growth Engine (Product-Led Growth) [Turn users into evangelists. Bu
 
 Additional:
   ☐ Verify that all of the chapter's offset does match the transcript's offset
-  ☐ Update the video shower to use the youtube id, such that when getting back to homepage, the video can be processed with it
+  ✔ Update the video shower to use the youtube id, such that when getting back to homepage, the video can be processed with it @done(25-10-03 23:33)
     - or get the youtube id from the video id status
       
