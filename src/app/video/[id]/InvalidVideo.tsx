@@ -2,7 +2,11 @@
 
 import { useRouter } from "next/navigation";
 
-export default function InvalidVideo({ id }: { id: string | undefined }) {
+export default function InvalidVideo({
+  youtubeId,
+}: {
+  youtubeId: string | undefined;
+}) {
   const router = useRouter();
 
   return (
@@ -10,7 +14,7 @@ export default function InvalidVideo({ id }: { id: string | undefined }) {
       <div className="flex flex-col gap-4 items-center p-8 shadow rounded-xl bg-gray-50">
         <h1 className="font-bold text-2xl">This video doesn&apos;t exist</h1>
         <button
-          onClick={() => router.push(`/?value=${id}`, {})}
+          onClick={() => router.push(`/?value=${youtubeId}`, {})}
           className="rounded-xl text-white px-4 py-2 w-md bg-green-600 hover:cursor-pointer hover:bg-green-500 active:bg-green-700"
         >
           Get this video

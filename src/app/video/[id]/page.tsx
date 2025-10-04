@@ -7,14 +7,16 @@ import { useQuery } from "convex/react";
 import { useParams } from "next/navigation";
 import { useState, useEffect, useRef } from "react";
 import InvalidVideo from "./InvalidVideo";
-import TranscriptItem from "./TranscriptItem";
 import NormalSidebar from "./NormalSidebar";
 import CompletedSidebar from "./CompletedSidebar";
 
 export default function VideoPage() {
   const [startTime, setStartTime] = useState(0);
-  const { id } = useParams();
-  const video = useQuery(api.videoInfo.getVideo, { id: id?.toString() });
+  const { id: youtubeId } = useParams();
+  const video = useQuery(api.videoInfo.getVideo, {
+    youtubeId: youtubeId?.toString(),
+  });
+
   const playerRef = useRef<YTPlayer | null>(null);
   const playerDivRef = useRef<HTMLDivElement | null>(null);
 
@@ -29,7 +31,7 @@ export default function VideoPage() {
   }
 
   if (!video) {
-    return <InvalidVideo id={id?.toString()} />;
+    return <InvalidVideo youtubeId={youtubeId?.toString()} />;
   }
 
   return (

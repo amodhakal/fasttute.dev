@@ -77,7 +77,9 @@ export default function HomePage() {
   async function handleValueSubmit(ev: FormEvent) {
     ev.preventDefault();
     setIsLoading(true);
-    const { error, id } = await retrieveVideoInfo({ youtubeUrlOrId: value });
+    const { error, youtubeId } = await retrieveVideoInfo({
+      youtubeUrlOrId: value,
+    });
     setIsLoading(false);
 
     if (error) {
@@ -86,6 +88,6 @@ export default function HomePage() {
       return;
     }
 
-    redirect(`/video/${id}`);
+    redirect(`/video/${youtubeId}`);
   }
 }

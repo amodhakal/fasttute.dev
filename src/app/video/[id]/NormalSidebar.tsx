@@ -2,6 +2,7 @@ import type { Doc } from "@/server/_generated/dataModel";
 import { Dispatch, RefObject, SetStateAction } from "react";
 import { YTPlayer } from "./page";
 import TranscriptItem from "./TranscriptItem";
+import regenerate from "./regenerate";
 
 type NormalSidebarProps = {
   video: Doc<"video_info">;
@@ -30,8 +31,14 @@ export default function NormalSidebar({
       {
         // TODO If the owner is the current user, allow them to regenerate the chapters
         video.status === "failed" && (
-          <div className="rounded-lg shadow p-2 bg-red-600 text-white mb-2">
-            AI enchancement failed due to an error.
+          <div className="rounded-lg shadow p-2 bg-red-600 text-white mb-2 flex flex-col gap-2">
+            <div className="">AI enchancement failed due to an error.</div>
+            <button
+              onClick={() => regenerate(video.youtubeId)}
+              className="rounded-xl text-white px-4 py-2 w-full bg-green-600 hover:cursor-pointer hover:bg-green-500 active:bg-green-700"
+            >
+              Retry
+            </button>
           </div>
         )
       }

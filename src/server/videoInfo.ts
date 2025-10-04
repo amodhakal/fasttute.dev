@@ -4,8 +4,6 @@
 
 import { v } from "convex/values";
 import { mutation, query } from "./_generated/server";
-// No need to import `Id` here; handler will accept either an Id or string.
-import { Id } from "./_generated/dataModel";
 import { vChapters, vStatus, vTranscript } from "./schema";
 
 export const getIdFromYoutubeId = query({
@@ -22,15 +20,18 @@ export const getIdFromYoutubeId = query({
 
 export const getVideo = query({
   args: {
-    id: v.optional(v.string()),
+    youtubeId: v.optional(v.string()),
   },
-  handler: async (ctx, { id }) => {
-    if (!id) {
+  handler: async (ctx, { youtubeId }) => {
+    if (!youtubeId) {
       return null;
     }
 
     try {
-      const foundVideo = await ctx.db.get(id as Id<"video_info">);
+      const foundVideo = await ctx.db
+        .query("video_info")
+        .filter((q) => q.eq(q.field("youtubeId"), youtubeId))
+        .first();
       return foundVideo;
     } catch {
       return null;

@@ -29,7 +29,7 @@ export const retrieveVideoInfo = action({
         youtubeId,
       });
       if (existingId) {
-        return { id: existingId, error: null };
+        return { youtubeId: existingId, error: null };
       }
 
       const youtube = await Innertube.create({
@@ -80,32 +80,46 @@ export const retrieveVideoInfo = action({
         transcript,
       });
 
-      await ctx.scheduler.runAfter(0, api.actions.processWithAI, {
-        id: newVideoId,
-      });
+      await ctx.scheduler.runAfter(0, api.actions.processWithAI, { youtubeId });
 
-      return { id: newVideoId, error: null };
+      return { youtubeId, error: null };
     } catch (err: unknown) {
-      return { ...handleError(err), id: null };
+      return { ...handleError(err), youtubeId: null };
     }
   },
 });
 
-export const processWithAI = action({
-  args: { id: v.id("video_info") },
-  handler: async (ctx, { id }) => {
-    try {
-      const video = await ctx.runQuery(api.videoInfo.getVideo, { id });
-      if (!video) {
-        console.error(`Didn't find video info for id: ${id}`);
-        return;
-      }
+export const regenerate = action({
+  args: { youtubeId: v.string() },
+  handler: async (ctx, { youtubeId }) => {
+    const video = await ctx.runQuery(api.videoInfo.getVideo, { youtubeId });
+    if (!video) {
+      return;
+    }
+    await ctx.runMutation(api.videoInfo.updateStatus, {
+      id: video._id,
+      status: "pending",
+    });
 
+    await ctx.runAction(api.actions.processWithAI, { youtubeId });
+  },
+});
+
+export const processWithAI = action({
+  args: { youtubeId: v.string() },
+  handler: async (ctx, { youtubeId }) => {
+    const video = await ctx.runQuery(api.videoInfo.getVideo, { youtubeId });
+    if (!video) {
+      console.error(`Didn't find video info for id: ${youtubeId}`);
+      return;
+    }
+
+    try {
       await aiVideoProcessingHandler(video);
     } catch (err) {
       console.error(err);
       await ctx.runMutation(api.videoInfo.updateStatus, {
-        id,
+        id: video._id,
         status: "failed",
       });
     }

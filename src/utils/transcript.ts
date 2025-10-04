@@ -219,8 +219,8 @@ export function extractTextFromSegment(segment: AnySegment): string {
 }
 
 export type RetrievalReturn =
-  | { id: Id<"video_info">; error: null }
-  | { id: null; error: string };
+  | { youtubeId: string; error: null }
+  | { youtubeId: null; error: string };
 
 export type TranscriptValues = {
   text: string;
