@@ -40,31 +40,33 @@ export default function VideoPage() {
         <p className="font-bold text-2xl">Please use a larger display</p>
       </div>
 
-      <div className="hidden md:grid grid-cols-5 gap-4 p-4 w-full max-w-full">
-        <div className="md:col-span-4">
-          <div className="w-full aspect-video md:sticky top-4">
-            <div
-              id="yt-player"
-              ref={playerDivRef}
-              className="w-full h-full block border-0 rounded-lg"
-            />
+      <div className="hidden md:block">
+        <div className="grid grid-cols-5 gap-4 p-4 w-full max-w-full">
+          <div className="md:col-span-4">
+            <div className="w-full aspect-video md:sticky top-4">
+              <div
+                id="yt-player"
+                ref={playerDivRef}
+                className="w-full h-full block border-0 rounded-lg"
+              />
+            </div>
           </div>
-        </div>
 
-        <div className="md:relative md:col-span-1">
-          <div className="md:absolute inset-0 overflow-y-auto flex flex-col gap-2">
-            <NormalSidebar
-              video={video}
-              startTime={startTime}
-              setStartTime={setStartTime}
-              playerRef={playerRef}
-            />
-            <CompletedSidebar
-              video={video}
-              startTime={startTime}
-              setStartTime={setStartTime}
-              playerRef={playerRef}
-            />
+          <div className="md:relative md:col-span-1">
+            <div className="md:absolute inset-0 overflow-y-auto flex flex-col gap-2">
+              <NormalSidebar
+                video={video}
+                startTime={startTime}
+                setStartTime={setStartTime}
+                playerRef={playerRef}
+              />
+              <CompletedSidebar
+                video={video}
+                startTime={startTime}
+                setStartTime={setStartTime}
+                playerRef={playerRef}
+              />
+            </div>
           </div>
         </div>
       </div>
