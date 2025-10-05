@@ -29,7 +29,7 @@ export const retrieveVideoInfo = action({
         youtubeId,
       });
       if (existingId) {
-        return { youtubeId: existingId, error: null };
+        return { youtubeId, error: null };
       }
 
       const youtube = await Innertube.create({
@@ -74,7 +74,7 @@ export const retrieveVideoInfo = action({
       }
 
       const transcript = segments.map(getTranscriptValuesFromSegment);
-      const newVideoId = await ctx.runMutation(api.videoInfo.insertVideoInfo, {
+      await ctx.runMutation(api.videoInfo.insertVideoInfo, {
         youtubeId,
         title: videoTitle,
         transcript,
