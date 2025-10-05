@@ -18,8 +18,3 @@ This is a waste of time and a massive barrier to effective learning.
 ## The Solution
 
 Fasttute is a web application that takes a YouTube URL and generates an interactive, AI-powered learning session. It provides:
-
-- **A time-synced transcript** that lets you read along and click to jump to any point in the video.
-- **AI-generated chapter markers** that structure the video and make navigation effortless.
-- **AI-extracted code blocks** that you can copy with a single click.
-- **A personal, searchable library** to save, organize, and revisit the content that matters to you.

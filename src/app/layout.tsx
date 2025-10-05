@@ -1,5 +1,4 @@
 import ConvexClientProvider from "@/components/ConvexClientProvider";
-import { ClerkLoaded, ClerkProvider } from "@clerk/nextjs";
 import { Analytics } from "@vercel/analytics/next";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import type { Metadata } from "next";
@@ -24,16 +23,12 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`${font.className} antialiased`}>
-        <ClerkProvider>
-          <ClerkLoaded>
-            <ConvexClientProvider>
-              <Toaster position="top-center" />
-              {children}
-              <SpeedInsights />
-              <Analytics />
-            </ConvexClientProvider>
-          </ClerkLoaded>
-        </ClerkProvider>
+        <ConvexClientProvider>
+          <Toaster position="top-center" />
+          {children}
+          <SpeedInsights />
+          <Analytics />
+        </ConvexClientProvider>
       </body>
     </html>
   );
