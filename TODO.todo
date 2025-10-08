@@ -1,0 +1,6 @@
+☐ Build an AI chatbot as a Q&A about the application
+    ☐ Possibly make it stateful of the last 3 responses.
+☐ Implement auth, requiring signups and signins to use the chatbot.
+☐ Clean up the transcripts, fixing the grammers and such.
+☐ Improve the frontend quality to look much better and responsive.
+☐ Verify with a lower quality model that the question given is relevant.
