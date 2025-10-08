@@ -9,6 +9,8 @@ import { useState, useEffect, useRef } from "react";
 import InvalidVideo from "./InvalidVideo";
 import NormalSidebar from "./NormalSidebar";
 import CompletedSidebar from "./CompletedSidebar";
+import Chat from "./Chat";
+import Header from "@/components/Header";
 
 export default function VideoPage() {
   const [startTime, setStartTime] = useState(0);
@@ -36,12 +38,13 @@ export default function VideoPage() {
 
   return (
     <div className="">
+      <Header />
       <div className="md:hidden flex justify-center items-center h-screen w-screen">
         <p className="font-bold text-2xl">Please use a larger display</p>
       </div>
 
-      <div className="hidden md:block">
-        <div className="grid grid-cols-5 gap-4 p-4 w-full max-w-full">
+      <div className="hidden md:flex flex-col gap-4 p-4">
+        <div className="grid grid-cols-5 gap-4 w-full max-w-full">
           <div className="md:col-span-4">
             <div className="w-full aspect-video md:sticky top-4">
               <div
@@ -69,6 +72,8 @@ export default function VideoPage() {
             </div>
           </div>
         </div>
+
+        <Chat />
       </div>
     </div>
   );
