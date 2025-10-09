@@ -11,7 +11,7 @@ export function Home() {
 
   const [value, setValue] = useState(searchParams.get("value") || "");
   const [isLoading, setIsLoading] = useState(false);
-  const retrieveVideoInfo = useAction(api.actions.retrieveVideoInfo);
+  const retrieveVideoInfo = useAction(api.videoInfo.retrieveVideoInfo);
 
   return (
     <form
