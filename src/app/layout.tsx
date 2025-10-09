@@ -1,15 +1,7 @@
 import ConvexClientProvider from "@/components/ConvexClientProvider";
-import { Analytics } from "@vercel/analytics/next";
-import { SpeedInsights } from "@vercel/speed-insights/next";
+import { spaceGrotesk } from "@/fonts";
 import type { Metadata } from "next";
-import { Funnel_Display } from "next/font/google";
-import { Toaster } from "react-hot-toast";
 import "./globals.css";
-import { ClerkLoaded } from "@clerk/clerk-react";
-
-const font = Funnel_Display({
-  weight: "variable",
-});
 
 export const metadata: Metadata = {
   title: "fasttute.dev",
@@ -23,10 +15,10 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`${font.className} antialiased`}>
-        <ConvexClientProvider>
-            {children}
-        </ConvexClientProvider>
+      <body
+        className={`${spaceGrotesk.className} antialiased bg-black text-gray-300`}
+      >
+        <ConvexClientProvider>{children}</ConvexClientProvider>
       </body>
     </html>
   );

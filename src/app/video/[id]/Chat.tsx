@@ -56,7 +56,19 @@ export default function Chat() {
           value={question}
           onChange={(e) => setQuestion(e.target.value)}
           placeholder="Have questions about this video? Ask me!"
-          className="w-full h-14 py-1.5 px-4 text-gray-100 rounded-xl rounded-r-none"
+          className="w-full h-14 py-1.5 px-4 bg-transparent text-gray-100 rounded-xl rounded-r-none"
+          onKeyDown={(e) => {
+            if (e.key != "Enter") {
+              return;
+            }
+
+            if (e.shiftKey) {
+              return;
+            }
+
+            e.preventDefault();
+            handleValueSubmit(e);
+          }}
         ></textarea>
         <button
           type="submit"
@@ -163,6 +175,11 @@ export default function Chat() {
 
   async function handleValueSubmit(ev: FormEvent) {
     ev.preventDefault();
+    if (!question) {
+      errorToast("No question asked", "No question asked");
+      return;
+    }
+
     const copiedQuestion = question.toString();
     setQuestion("");
 

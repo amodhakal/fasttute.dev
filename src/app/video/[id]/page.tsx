@@ -11,6 +11,7 @@ import CompletedSidebar from "./CompletedSidebar";
 import InvalidVideo from "./InvalidVideo";
 import NormalSidebar from "./NormalSidebar";
 import { VideoPageContext } from "@/hooks/useVideoPageContext";
+import LoadingPage from "@/components/LoadingPage";
 
 export default function VideoPage() {
   const [startTime, setStartTime] = useState(0);
@@ -25,11 +26,7 @@ export default function VideoPage() {
   useYouTubePlayer(video, setStartTime, playerRef, playerDivRef);
 
   if (video === undefined) {
-    return (
-      <div className="w-screen h-screen flex justify-center items-center">
-        <p className="font-bold text-2xl">Loading video...</p>
-      </div>
-    );
+    return <LoadingPage />;
   }
 
   if (!video) {
