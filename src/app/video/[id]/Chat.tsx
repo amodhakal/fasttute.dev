@@ -11,11 +11,19 @@ import { FormEvent, useState } from "react";
 import askQuestion from "./askQuestion";
 import { Doc } from "@/server/_generated/dataModel";
 import { errorToast } from "@/utils/errorToast";
+import { useQuery } from "convex/react";
+import { api } from "@/server/_generated/api";
 
 export default function Chat({ video }: { video: Doc<"video_info"> }) {
   const { isSignedIn, userId } = useAuth();
   const [isLoading, setIsLoading] = useState(false);
   const [question, setQuestion] = useState("");
+  const chats = useQuery(api.videoChat.getChatsByVideoAndUserId, {
+    videoId: video._id,
+    userId: userId || "Not received",
+  })?.map((item) => item.chat);
+
+  console.log(chats);
 
   if (!isSignedIn) {
     return (

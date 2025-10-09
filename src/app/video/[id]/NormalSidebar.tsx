@@ -35,10 +35,11 @@ export default function NormalSidebar({
           <div className="rounded-lg shadow p-2 bg-red-600 text-white mb-2 flex flex-col gap-2">
             <div className="">AI enchancement failed due to an error.</div>
             <button
-              onClick={async () =>
-                await fetchAction(api.actions.regenerate, {
-                  youtubeId: video.youtubeId,
-                })
+              onClick={
+                async () => {}
+                // await fetchAction(api.actions.regenerate, {
+                // youtubeId: video.youtubeId,
+                // })
               }
               className="rounded-xl text-white px-4 py-2 w-full bg-green-600 hover:cursor-pointer hover:bg-green-500 active:bg-green-700"
             >
