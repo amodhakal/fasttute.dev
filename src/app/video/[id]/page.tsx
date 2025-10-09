@@ -73,7 +73,7 @@ export default function VideoPage() {
           </div>
         </div>
 
-        <Chat />
+        <Chat video={video} />
       </div>
     </div>
   );

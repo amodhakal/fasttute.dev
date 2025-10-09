@@ -6,3 +6,5 @@
 ☐ Verify with a lower quality model that the question given is relevant.
 ✔ Create an icon for the favicon and the github OAuth. @done(25-10-08 17:52)
 ✔ Setup Clerk for a production instance. @done(25-10-08 17:52)
+☐ Setup privacy, terms of services, and other things to make the website official (Update this to Google)
+☐ Setup a way for users to submit feedback

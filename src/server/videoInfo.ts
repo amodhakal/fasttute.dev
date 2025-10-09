@@ -4,7 +4,7 @@
 
 import { v } from "convex/values";
 import { mutation, query } from "./_generated/server";
-import { vChapters, vStatus, vTranscript } from "./schema";
+import { vChapters, vStatus, vTranscript } from "./schema/videoInfo";
 
 export const getIdFromYoutubeId = query({
   args: { youtubeId: v.string() },

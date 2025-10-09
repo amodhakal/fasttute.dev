@@ -13,7 +13,9 @@ import type {
   FilterApi,
   FunctionReference,
 } from "convex/server";
-import type * as actions from "../actions.js";
+import type * as schema_videoChat from "../schema/videoChat.js";
+import type * as schema_videoInfo from "../schema/videoInfo.js";
+import type * as videoChat from "../videoChat.js";
 import type * as videoInfo from "../videoInfo.js";
 
 /**
@@ -25,7 +27,9 @@ import type * as videoInfo from "../videoInfo.js";
  * ```
  */
 declare const fullApi: ApiFromModules<{
-  actions: typeof actions;
+  "schema/videoChat": typeof schema_videoChat;
+  "schema/videoInfo": typeof schema_videoInfo;
+  videoChat: typeof videoChat;
   videoInfo: typeof videoInfo;
 }>;
 export declare const api: FilterApi<
