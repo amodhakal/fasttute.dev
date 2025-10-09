@@ -6,7 +6,7 @@ import { v } from "convex/values";
 import { action, mutation, query } from "./_generated/server";
 import { vChapters, vStatus, vTranscript } from "./schema/videoInfo";
 import { api } from "./_generated/api";
-import { aiVideoProcessingHandler } from "@/utils/ai";
+import { aiVideoProcessingHandler } from "@/utils/ai/chapters";
 import {
   getTranscriptValuesFromSegment,
   getYoutubeId,

@@ -1,29 +1,28 @@
 "use client";
 
-import {
-  SignedIn,
-  SignedOut,
-  SignInButton,
-  SignUpButton,
-  useAuth,
-} from "@clerk/clerk-react";
-import { FormEvent, useState } from "react";
-import askQuestion from "./askQuestion";
+import { api } from "@/server/_generated/api";
 import { Doc } from "@/server/_generated/dataModel";
 import { errorToast } from "@/utils/errorToast";
+import { SignInButton, SignUpButton, useAuth } from "@clerk/clerk-react";
 import { useQuery } from "convex/react";
-import { api } from "@/server/_generated/api";
+import { FormEvent, useState } from "react";
+import askQuestion from "./askQuestion";
+import ChatItem from "./ChatItem";
 
 export default function Chat({ video }: { video: Doc<"video_info"> }) {
   const { isSignedIn, userId } = useAuth();
   const [isLoading, setIsLoading] = useState(false);
   const [question, setQuestion] = useState("");
-  const chats = useQuery(api.videoChat.getChatsByVideoAndUserId, {
+  const allChats = useQuery(api.videoChat.getChatsByVideoAndUserId, {
     videoId: video._id,
     userId: userId || "Not received",
-  })?.map((item) => item.chat);
+  });
 
-  console.log(chats);
+  console.log(allChats);
+  const chat =
+    allChats && allChats?.length > 0
+      ? allChats[0].chat.map((item) => item)
+      : [];
 
   if (!isSignedIn) {
     return (
@@ -44,52 +43,60 @@ export default function Chat({ video }: { video: Doc<"video_info"> }) {
   }
 
   return (
-    <form
-      onSubmit={handleValueSubmit}
-      className="bg-gray-800 text-gray-100 rounded-xl flex items-center justify-between gap-4 h-14"
-    >
-      <textarea
-        value={question}
-        onChange={(e) => setQuestion(e.target.value)}
-        placeholder="Have questions about this video? Ask me!"
-        className="w-full h-14 py-1.5 px-4 text-gray-100 rounded-xl rounded-r-none"
-      ></textarea>
-      <button
-        type="submit"
-        disabled={isLoading}
-        aria-busy={isLoading}
-        className={`rounded-xl rounded-l-none text-white h-14 w-3xs bg-green-600 hover:cursor-pointer hover:bg-green-500 active:bg-green-700 ${isLoading ? "opacity-75 cursor-wait" : ""}`}
+    <div className="w-full flex flex-col gap-4">
+      <form
+        onSubmit={handleValueSubmit}
+        className="bg-gray-800 text-gray-100 rounded-xl flex items-center justify-between gap-4 h-14"
       >
-        {isLoading ? (
-          <span className="flex items-center justify-center gap-2">
-            <svg
-              className="animate-spin h-5 w-5 text-white"
-              xmlns="http://www.w3.org/2000/svg"
-              fill="none"
-              viewBox="0 0 24 24"
-              aria-hidden="true"
-            >
-              <circle
-                className="opacity-25"
-                cx="12"
-                cy="12"
-                r="10"
-                stroke="currentColor"
-                strokeWidth="4"
-              ></circle>
-              <path
-                className="opacity-75"
-                fill="currentColor"
-                d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"
-              ></path>
-            </svg>
-            Processing...
-          </span>
-        ) : (
-          "Ask"
-        )}
-      </button>
-    </form>
+        <textarea
+          value={question}
+          onChange={(e) => setQuestion(e.target.value)}
+          placeholder="Have questions about this video? Ask me!"
+          className="w-full h-14 py-1.5 px-4 text-gray-100 rounded-xl rounded-r-none"
+        ></textarea>
+        <button
+          type="submit"
+          disabled={isLoading}
+          aria-busy={isLoading}
+          className={`rounded-xl rounded-l-none text-white h-14 w-3xs bg-green-600 hover:cursor-pointer hover:bg-green-500 active:bg-green-700 ${isLoading ? "opacity-75 cursor-wait" : ""}`}
+        >
+          {isLoading ? (
+            <span className="flex items-center justify-center gap-2">
+              <svg
+                className="animate-spin h-5 w-5 text-white"
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                aria-hidden="true"
+              >
+                <circle
+                  className="opacity-25"
+                  cx="12"
+                  cy="12"
+                  r="10"
+                  stroke="currentColor"
+                  strokeWidth="4"
+                ></circle>
+                <path
+                  className="opacity-75"
+                  fill="currentColor"
+                  d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"
+                ></path>
+              </svg>
+              Processing...
+            </span>
+          ) : (
+            "Ask"
+          )}
+        </button>
+      </form>
+
+      <div className="p-4 bg-gray-800 text-gray-100 rounded-xl gap-2 flex flex-col">
+        {chat.map((item) => (
+          <ChatItem key={crypto.randomUUID()} item={item} />
+        ))}
+      </div>
+    </div>
   );
 
   async function handleValueSubmit(ev: FormEvent) {

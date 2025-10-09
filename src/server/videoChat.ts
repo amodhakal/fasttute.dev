@@ -1,8 +1,9 @@
+import { aiQnAHandler } from "@/utils/ai/qna";
 import { v } from "convex/values";
-import { action, mutation, query } from "./_generated/server";
-import { vTranscript } from "./schema/videoInfo";
 import { api } from "./_generated/api";
-import { vChat, vRoles } from "./schema/videoChat";
+import { action, mutation, query } from "./_generated/server";
+import { Chat, vChat, vRoles } from "./schema/videoChat";
+import { vTranscript } from "./schema/videoInfo";
 
 export const handleAskedQuestion = action({
   args: {
@@ -35,13 +36,25 @@ export const handleAskedQuestion = action({
           })
         : foundChats[0]._id;
 
+    const newQuestion: Chat = {
+      id: crypto.randomUUID(),
+      role: "User",
+      text: question,
+    };
+
     await ctx.runMutation(api.videoChat.insertIntoChat, {
       chatId,
-      text: question,
-      role: "User",
+      ...newQuestion,
     });
 
-    // TODO Ask AI for answer, and update it
+    const chatHistoryForAI = chatLength === 0 ? [] : foundChats[0].chat;
+
+    chatHistoryForAI.push(newQuestion);
+
+    const generator = await aiQnAHandler(chatHistoryForAI, transcript);
+    for await (const chunk of generator) {
+      console.log(chunk.text);
+    }
   },
 });
 
@@ -97,16 +110,17 @@ export const createNewChat = mutation({
 export const insertIntoChat = mutation({
   args: {
     chatId: v.id("video_chat"),
+    id: v.string(),
     role: vRoles(),
     text: v.string(),
   },
-  handler: async (ctx, { chatId, role, text }) => {
+  handler: async (ctx, { chatId, id, role, text }) => {
     const foundChat = await ctx.runQuery(api.videoChat.getChatById, { chatId });
     if (!foundChat) {
       throw new Error(`Chat ${chatId} must have existing chat`);
     }
 
-    foundChat.chat.push({ role, text });
+    foundChat.chat.push({ id, role, text });
     await ctx.db.patch(chatId, { chat: foundChat.chat });
   },
 });

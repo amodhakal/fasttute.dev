@@ -1,5 +1,5 @@
 ☐ Build an AI chatbot as a Q&A about the application.
-    ☐ Possibly make it stateful of the last 3 responses.
+    ☐ Allow the users to fully clear the transcript or remove certain items
 ✔ Implement auth, requiring signups and signins to use the chatbot. @done(25-10-08 15:36)
 ☐ Clean up the transcripts, fixing the grammers and such.
 ☐ Improve the frontend quality to look much better and responsive.
