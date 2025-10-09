@@ -11,7 +11,7 @@ type TranscriptItemProps = {
   };
 };
 
-const TIME_DIFF = 60;
+export const TIME_DIFF = 60;
 
 export default function TranscriptItem({
   transcriptItem,

@@ -2,7 +2,7 @@ import { aiQnAHandler } from "@/utils/ai/qna";
 import { v } from "convex/values";
 import { api } from "./_generated/api";
 import { action, mutation, query } from "./_generated/server";
-import { Chat, vChat, vRoles } from "./schema/videoChat";
+import { Chat, vRoles } from "./schema/videoChat";
 import { vTranscript } from "./schema/videoInfo";
 
 export const handleAskedQuestion = action({
@@ -51,10 +51,73 @@ export const handleAskedQuestion = action({
 
     chatHistoryForAI.push(newQuestion);
 
+    const newAnswer: Chat = {
+      id: crypto.randomUUID(),
+      role: "Model",
+      text: "",
+    };
+
+    await ctx.runMutation(api.videoChat.insertIntoChat, {
+      chatId,
+      ...newAnswer,
+    });
+
     const generator = await aiQnAHandler(chatHistoryForAI, transcript);
     for await (const chunk of generator) {
-      console.log(chunk.text);
+      await ctx.runMutation(api.videoChat.pushChunkToModelChat, {
+        chatId,
+        responseId: newAnswer.id,
+        chunk: chunk.text,
+      });
     }
+  },
+});
+
+export const pushChunkToModelChat = mutation({
+  args: {
+    chatId: v.id("video_chat"),
+    responseId: v.string(),
+    chunk: v.optional(v.string()),
+  },
+  handler: async (ctx, { chatId, responseId, chunk }) => {
+    if (!chunk) {
+      return;
+    }
+
+    const chat = await ctx.runQuery(api.videoChat.getChatById, { chatId });
+    if (!chat) {
+      throw new Error(`Received chat id: ${chatId} with no chat`);
+    }
+
+    const previousMessage = chat.chat;
+    const currentModelMessage = previousMessage.pop();
+
+    if (!currentModelMessage) {
+      throw new Error(
+        `Received chat id: ${chatId} has no current model message`
+      );
+    }
+
+    if (currentModelMessage.role !== "Model") {
+      throw new Error(`Received chat id: ${chatId} has current user message`);
+    }
+
+    if (currentModelMessage.id !== responseId) {
+      throw new Error(
+        `Received chat id: ${chatId} has unequal response id and current model message id`
+      );
+    }
+
+    const updatedChat = [
+      ...previousMessage,
+      {
+        id: currentModelMessage.id,
+        role: currentModelMessage.role,
+        text: currentModelMessage.text + chunk,
+      },
+    ];
+
+    await ctx.db.patch(chatId, { chat: updatedChat });
   },
 });
 
@@ -122,5 +185,22 @@ export const insertIntoChat = mutation({
 
     foundChat.chat.push({ id, role, text });
     await ctx.db.patch(chatId, { chat: foundChat.chat });
+  },
+});
+
+export const deleteChat = mutation({
+  args: {
+    userId: v.string(),
+    videoId: v.id("video_info"),
+  },
+  handler: async (ctx, { userId, videoId }) => {
+    const chats = await ctx.runQuery(api.videoChat.getChatsByVideoAndUserId, {
+      userId,
+      videoId,
+    });
+
+    for (const chat of chats) {
+      await ctx.db.delete(chat._id);
+    }
   },
 });

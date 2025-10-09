@@ -1,8 +1,10 @@
-☐ Build an AI chatbot as a Q&A about the application.
-    ☐ Allow the users to fully clear the transcript or remove certain items
+✔ Build an AI chatbot as a Q&A about the application. @done(25-10-09 12:51)
+    ✔ Allow the users to fully clear the transcript @done(25-10-09 13:06)
 ✔ Implement auth, requiring signups and signins to use the chatbot. @done(25-10-08 15:36)
 ☐ Clean up the transcripts, fixing the grammers and such.
 ☐ Improve the frontend quality to look much better and responsive.
+    ☐ Build a mobile friendly design similar to what Udemy does.
+    ☐ When waiting, use the spinning animations.
 ☐ Verify with a lower quality model that the question given is relevant.
 ✔ Create an icon for the favicon and the github OAuth. @done(25-10-08 17:52)
 ✔ Setup Clerk for a production instance. @done(25-10-08 17:52)

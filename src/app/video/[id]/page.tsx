@@ -73,7 +73,18 @@ export default function VideoPage() {
           </div>
         </div>
 
-        <Chat video={video} />
+        <Chat
+          video={video}
+          setStartTime={setStartTime}
+          onSeek={(secs: number) => {
+            const p = playerRef.current;
+            if (p && p.seekTo) {
+              p.seekTo(secs, true);
+            } else {
+              setStartTime(secs);
+            }
+          }}
+        />
       </div>
     </div>
   );

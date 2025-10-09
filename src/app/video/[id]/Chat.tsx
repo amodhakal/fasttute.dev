@@ -5,13 +5,23 @@ import { Doc } from "@/server/_generated/dataModel";
 import { errorToast } from "@/utils/errorToast";
 import { SignInButton, SignUpButton, useAuth } from "@clerk/clerk-react";
 import { useQuery } from "convex/react";
-import { FormEvent, useState } from "react";
-import askQuestion from "./askQuestion";
+import { Dispatch, FormEvent, SetStateAction, useState } from "react";
 import ChatItem from "./ChatItem";
+import { askQuestion, clearChat } from "./actions";
 
-export default function Chat({ video }: { video: Doc<"video_info"> }) {
+export default function Chat({
+  video,
+  setStartTime,
+  onSeek,
+}: {
+  video: Doc<"video_info">;
+  setStartTime: Dispatch<SetStateAction<number>>;
+  onSeek?: (secs: number) => void;
+}) {
   const { isSignedIn, userId } = useAuth();
-  const [isLoading, setIsLoading] = useState(false);
+  const [isChatProcessing, setIsChatProcessing] = useState(false);
+  const [isClearing, setIsClearing] = useState(false);
+
   const [question, setQuestion] = useState("");
   const allChats = useQuery(api.videoChat.getChatsByVideoAndUserId, {
     videoId: video._id,
@@ -56,11 +66,11 @@ export default function Chat({ video }: { video: Doc<"video_info"> }) {
         ></textarea>
         <button
           type="submit"
-          disabled={isLoading}
-          aria-busy={isLoading}
-          className={`rounded-xl rounded-l-none text-white h-14 w-3xs bg-green-600 hover:cursor-pointer hover:bg-green-500 active:bg-green-700 ${isLoading ? "opacity-75 cursor-wait" : ""}`}
+          disabled={isChatProcessing || isClearing}
+          aria-busy={isChatProcessing || isClearing}
+          className={`rounded-xl rounded-l-none text-white h-14 w-3xs bg-green-600 hover:cursor-pointer hover:bg-green-500 active:bg-green-700 disabled:bg-green-700 disabled:cursor-auto ${isChatProcessing ? "opacity-75 cursor-wait" : ""}`}
         >
-          {isLoading ? (
+          {isChatProcessing ? (
             <span className="flex items-center justify-center gap-2">
               <svg
                 className="animate-spin h-5 w-5 text-white"
@@ -91,20 +101,78 @@ export default function Chat({ video }: { video: Doc<"video_info"> }) {
         </button>
       </form>
 
-      <div className="p-4 bg-gray-800 text-gray-100 rounded-xl gap-2 flex flex-col">
-        {chat.map((item) => (
-          <ChatItem key={crypto.randomUUID()} item={item} />
-        ))}
+      {chat.length > 0 && (
+        <div className="p-4 bg-gray-800 text-gray-100 rounded-xl gap-2 flex flex-col">
+          {chat.map((item) => (
+            <ChatItem
+              key={item.id}
+              item={item}
+              setStartTime={setStartTime}
+              onSeek={onSeek}
+            />
+          ))}
+        </div>
+      )}
+
+      <div className="w-full flex justify-center">
+        {chat.length > 0 && (
+          <button
+            onClick={clearChatHandler}
+            disabled={isChatProcessing || isClearing}
+            aria-busy={isChatProcessing || isClearing}
+            className={`rounded-xl text-white py-4 w-3xs bg-green-600 hover:cursor-pointer hover:bg-green-500 active:bg-green-700 disabled:bg-green-700 disabled:cursor-auto ${isChatProcessing ? "opacity-75 cursor-wait" : ""}`}
+          >
+            {isClearing ? (
+              <span className="flex items-center justify-center gap-2">
+                <svg
+                  className="animate-spin h-5 w-5 text-white"
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  aria-hidden="true"
+                >
+                  <circle
+                    className="opacity-25"
+                    cx="12"
+                    cy="12"
+                    r="10"
+                    stroke="currentColor"
+                    strokeWidth="4"
+                  ></circle>
+                  <path
+                    className="opacity-75"
+                    fill="currentColor"
+                    d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"
+                  ></path>
+                </svg>
+                Clearing...
+              </span>
+            ) : (
+              "Clear chat"
+            )}
+          </button>
+        )}
       </div>
     </div>
   );
+
+  async function clearChatHandler() {
+    setIsClearing(true);
+    const { error } = await clearChat(userId!, video._id);
+
+    setIsClearing(false);
+    if (error) {
+      errorToast(error);
+      return;
+    }
+  }
 
   async function handleValueSubmit(ev: FormEvent) {
     ev.preventDefault();
     const copiedQuestion = question.toString();
     setQuestion("");
 
-    setIsLoading(true);
+    setIsChatProcessing(true);
     const { error } = await askQuestion(
       copiedQuestion,
       userId!,
@@ -112,7 +180,7 @@ export default function Chat({ video }: { video: Doc<"video_info"> }) {
       video.transcript
     );
 
-    setIsLoading(false);
+    setIsChatProcessing(false);
     if (error) {
       errorToast(error);
       return;
