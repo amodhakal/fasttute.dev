@@ -1,16 +1,16 @@
 "use client";
 
-/* eslint-disable @typescript-eslint/no-explicit-any */
-
+import Header from "@/components/Header";
+import { useYouTubePlayer, YTPlayer } from "@/hooks/useYoutubePlayer";
 import { api } from "@/server/_generated/api";
 import { useQuery } from "convex/react";
 import { useParams } from "next/navigation";
-import { useState, useEffect, useRef } from "react";
+import { useRef, useState } from "react";
+import Chat from "./Chat";
+import CompletedSidebar from "./CompletedSidebar";
 import InvalidVideo from "./InvalidVideo";
 import NormalSidebar from "./NormalSidebar";
-import CompletedSidebar from "./CompletedSidebar";
-import Chat from "./Chat";
-import Header from "@/components/Header";
+import { VideoPageContext } from "@/hooks/useVideoPageContext";
 
 export default function VideoPage() {
   const [startTime, setStartTime] = useState(0);
@@ -36,6 +36,15 @@ export default function VideoPage() {
     return <InvalidVideo youtubeId={youtubeId?.toString()} />;
   }
 
+  const onSeek = (secs: number) => {
+    const p = playerRef.current;
+    if (p && p.seekTo) {
+      p.seekTo(secs, true);
+    } else {
+      setStartTime(secs);
+    }
+  };
+
   return (
     <div className="">
       <Header />
@@ -43,143 +52,32 @@ export default function VideoPage() {
         <p className="font-bold text-2xl">Please use a larger display</p>
       </div>
 
-      <div className="hidden md:flex flex-col gap-4 p-4">
-        <div className="grid grid-cols-5 gap-4 w-full max-w-full">
-          <div className="md:col-span-4">
-            <div className="w-full aspect-video md:sticky top-4">
-              <div
-                id="yt-player"
-                ref={playerDivRef}
-                className="w-full h-full block border-0 rounded-lg"
-              />
+      <VideoPageContext.Provider
+        value={{ video, startTime, setStartTime, playerRef, onSeek }}
+      >
+        <div className="hidden md:flex flex-col gap-4 p-4">
+          <div className="grid grid-cols-5 gap-4 w-full max-w-full">
+            <div className="md:col-span-4">
+              <div className="w-full aspect-video md:sticky top-4">
+                <div
+                  id="yt-player"
+                  ref={playerDivRef}
+                  className="w-full h-full block border-0 rounded-lg"
+                />
+              </div>
+            </div>
+
+            <div className="md:relative md:col-span-1">
+              <div className="md:absolute inset-0 overflow-y-auto flex flex-col gap-2">
+                <NormalSidebar />
+                <CompletedSidebar />
+              </div>
             </div>
           </div>
 
-          <div className="md:relative md:col-span-1">
-            <div className="md:absolute inset-0 overflow-y-auto flex flex-col gap-2">
-              <NormalSidebar
-                video={video}
-                startTime={startTime}
-                setStartTime={setStartTime}
-                playerRef={playerRef}
-              />
-              <CompletedSidebar
-                video={video}
-                startTime={startTime}
-                setStartTime={setStartTime}
-                playerRef={playerRef}
-              />
-            </div>
-          </div>
+          <Chat />
         </div>
-
-        <Chat
-          video={video}
-          setStartTime={setStartTime}
-          onSeek={(secs: number) => {
-            const p = playerRef.current;
-            if (p && p.seekTo) {
-              p.seekTo(secs, true);
-            } else {
-              setStartTime(secs);
-            }
-          }}
-        />
-      </div>
+      </VideoPageContext.Provider>
     </div>
   );
-}
-
-export type YTPlayer = {
-  seekTo?: (seconds: number, allowSeekAhead?: boolean) => void;
-  getCurrentTime?: () => number;
-  destroy?: () => void;
-};
-
-function useYouTubePlayer(
-  video: any,
-  setStartTime: (n: number) => void,
-  playerRef: React.RefObject<YTPlayer | null>,
-  playerDivRef: React.RefObject<HTMLDivElement | null>
-) {
-  useEffect(() => {
-    if (!video || !playerDivRef.current) {
-      return;
-    }
-
-    const videoId = video.youtubeId || video.youtubeID || undefined;
-    if (!videoId) {
-      return;
-    }
-
-    let mounted = true;
-    loadAPI().then(() => {
-      if (!mounted) {
-        return;
-      }
-
-      if (playerRef.current && playerRef.current.destroy) {
-        try {
-          playerRef.current.destroy();
-        } catch {}
-      }
-
-      playerRef.current = new (window as any).YT.Player(playerDivRef.current, {
-        videoId,
-        events: {},
-        playerVars: {
-          start: 0,
-          autoplay: 0,
-          playsinline: 1,
-        },
-      }) as unknown as YTPlayer;
-    });
-
-    return () => {
-      mounted = false;
-      if (playerRef.current && playerRef.current.destroy) {
-        try {
-          playerRef.current.destroy();
-        } catch {}
-      }
-
-      playerRef.current = null;
-    };
-
-    function loadAPI() {
-      return new Promise<any>((resolve) => {
-        if ((window as any).YT && (window as any).YT.Player) {
-          return resolve((window as any).YT);
-        }
-
-        const existing = document.querySelector(
-          'script[src="https://www.youtube.com/iframe_api"]'
-        );
-        if (!existing) {
-          const tag = document.createElement("script");
-          tag.src = "https://www.youtube.com/iframe_api";
-          document.body.appendChild(tag);
-        }
-
-        (window as any).onYouTubeIframeAPIReady = () => {
-          resolve((window as any).YT);
-        };
-      });
-    }
-  }, [video, playerDivRef, playerRef]);
-
-  useEffect(() => {
-    const t = setInterval(() => {
-      const p = playerRef.current;
-      if (p && typeof p.getCurrentTime === "function") {
-        try {
-          const secs = Math.floor(
-            (p.getCurrentTime && p.getCurrentTime()) || 0
-          );
-          setStartTime(secs);
-        } catch {}
-      }
-    }, 1000);
-    return () => clearInterval(t);
-  }, [setStartTime, playerRef]);
 }

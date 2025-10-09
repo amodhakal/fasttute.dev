@@ -1,42 +1,33 @@
-import type { Doc } from "@/server/_generated/dataModel";
-import { Dispatch, RefObject, SetStateAction } from "react";
-import { YTPlayer } from "./page";
-import TranscriptItem from "./TranscriptItem";
-import { fetchAction } from "convex/nextjs";
+import { useVideoPageContext } from "@/hooks/useVideoPageContext";
 import { api } from "@/server/_generated/api";
+import { fetchAction } from "convex/nextjs";
+import TranscriptItem from "./TranscriptItem";
+import { useAuth } from "@clerk/clerk-react";
 
-type NormalSidebarProps = {
-  video: Doc<"video_info">;
-  startTime: number;
-  setStartTime: Dispatch<SetStateAction<number>>;
-  playerRef: RefObject<YTPlayer | null>;
-};
+export default function NormalSidebar() {
+  const { video, startTime, setStartTime, playerRef } = useVideoPageContext();
+  const { userId } = useAuth();
 
-export default function NormalSidebar({
-  video,
-  startTime,
-  setStartTime,
-  playerRef,
-}: NormalSidebarProps) {
+  const isUserVideoOwner = video.ownerId && video.ownerId === userId;
+
   if (video.status === "completed") {
     return null;
   }
 
   return (
-    <div className="min-w-0">
+    <div className="flex flex-col gap-2">
       {video.status === "pending" && (
         <div className="rounded-lg shadow p-2 bg-gray-50 mb-2">
           Enhancing with AI...
         </div>
       )}
-      {
-        // TODO If the owner is the current user, allow them to regenerate the chapters
-        video.status === "failed" && (
-          <div className="rounded-lg shadow p-2 bg-red-600 text-white mb-2 flex flex-col gap-2">
-            <div className="">AI enchancement failed due to an error.</div>
+      {video.status === "failed" && (
+        <div className="rounded-lg shadow p-2 bg-red-600 text-white mb-2 flex flex-col gap-2">
+          <div className="">AI enchancement failed due to an error.</div>
+          {isUserVideoOwner && (
             <button
               onClick={async () =>
-                await fetchAction(api.videoInfo.regenerate, {
+                await fetchAction(api.retrieveVideoInfo.regenerate, {
                   youtubeId: video.youtubeId,
                 })
               }
@@ -44,9 +35,9 @@ export default function NormalSidebar({
             >
               Retry
             </button>
-          </div>
-        )
-      }
+          )}
+        </div>
+      )}
       {video.transcript.map((transcriptItem) => (
         <TranscriptItem
           key={crypto.randomUUID()}

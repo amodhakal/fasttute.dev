@@ -1,23 +1,17 @@
 "use client";
 
+import { useVideoPageContext } from "@/hooks/useVideoPageContext";
 import { api } from "@/server/_generated/api";
-import { Doc } from "@/server/_generated/dataModel";
 import { errorToast } from "@/utils/errorToast";
 import { SignInButton, SignUpButton, useAuth } from "@clerk/clerk-react";
 import { useQuery } from "convex/react";
-import { Dispatch, FormEvent, SetStateAction, useState } from "react";
+import { FormEvent, useState } from "react";
 import ChatItem from "./ChatItem";
 import { askQuestion, clearChat } from "./actions";
 
-export default function Chat({
-  video,
-  setStartTime,
-  onSeek,
-}: {
-  video: Doc<"video_info">;
-  setStartTime: Dispatch<SetStateAction<number>>;
-  onSeek?: (secs: number) => void;
-}) {
+export default function Chat() {
+  const { video, setStartTime, onSeek } = useVideoPageContext();
+
   const { isSignedIn, userId } = useAuth();
   const [isChatProcessing, setIsChatProcessing] = useState(false);
   const [isClearing, setIsClearing] = useState(false);

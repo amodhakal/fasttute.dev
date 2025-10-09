@@ -1,21 +1,9 @@
-import type { Doc } from "@/server/_generated/dataModel";
-import { Dispatch, RefObject, SetStateAction, useState } from "react";
-import { YTPlayer } from "./page";
+import { useVideoPageContext } from "@/hooks/useVideoPageContext";
+import { useState } from "react";
 import TranscriptItem from "./TranscriptItem";
 
-type CompletedSidebarProps = {
-  video: Doc<"video_info">;
-  startTime: number;
-  setStartTime: Dispatch<SetStateAction<number>>;
-  playerRef: RefObject<YTPlayer | null>;
-};
-
-export default function CompletedSidebar({
-  video,
-  startTime,
-  setStartTime,
-  playerRef,
-}: CompletedSidebarProps) {
+export default function CompletedSidebar() {
+  const { video, startTime, setStartTime, playerRef } = useVideoPageContext();
   const [isTranscriptActive, setIsTranscriptActive] = useState(true);
 
   if (video.status !== "completed" || !video.chapters) {

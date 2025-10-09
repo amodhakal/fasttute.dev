@@ -13,6 +13,7 @@ import type {
   FilterApi,
   FunctionReference,
 } from "convex/server";
+import type * as retrieveVideoInfo from "../retrieveVideoInfo.js";
 import type * as schema_videoChat from "../schema/videoChat.js";
 import type * as schema_videoInfo from "../schema/videoInfo.js";
 import type * as videoChat from "../videoChat.js";
@@ -27,6 +28,7 @@ import type * as videoInfo from "../videoInfo.js";
  * ```
  */
 declare const fullApi: ApiFromModules<{
+  retrieveVideoInfo: typeof retrieveVideoInfo;
   "schema/videoChat": typeof schema_videoChat;
   "schema/videoInfo": typeof schema_videoInfo;
   videoChat: typeof videoChat;

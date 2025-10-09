@@ -2,16 +2,18 @@
 
 import { api } from "@/server/_generated/api";
 import { errorToast } from "@/utils/errorToast";
+import { useAuth } from "@clerk/clerk-react";
 import { useAction } from "convex/react";
 import { redirect, useSearchParams } from "next/navigation";
 import { FormEvent, useState } from "react";
 
 export function Home() {
+  const { userId } = useAuth();
   const searchParams = useSearchParams();
 
   const [value, setValue] = useState(searchParams.get("value") || "");
   const [isLoading, setIsLoading] = useState(false);
-  const retrieveVideoInfo = useAction(api.videoInfo.retrieveVideoInfo);
+  const retrieveVideoInfo = useAction(api.retrieveVideoInfo.retrieveVideoInfo);
 
   return (
     <form
@@ -77,6 +79,7 @@ export function Home() {
     setIsLoading(true);
     const { error, youtubeId } = await retrieveVideoInfo({
       youtubeUrlOrId: value,
+      ownerId: userId ?? undefined,
     });
     setIsLoading(false);
 

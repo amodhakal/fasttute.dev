@@ -26,6 +26,7 @@ export const vStatus = () =>
   );
 
 export const videoInfo = defineTable({
+  ownerId: v.optional(v.string()),
   youtubeId: v.string(),
   title: v.string(),
   transcript: vTranscript(),
