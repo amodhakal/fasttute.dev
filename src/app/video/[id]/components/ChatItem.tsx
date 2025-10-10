@@ -24,7 +24,7 @@ export default function ChatItem({
 
   return (
     <div className="w-full">
-      <p className="text-green-100">{renderTextWithOffsets(text)}</p>
+      <p className="text-red-100">{renderTextWithOffsets(text)}</p>
     </div>
   );
 
@@ -39,7 +39,6 @@ export default function ChatItem({
       const seconds = Math.floor(offset % TIME_DIFF);
       const minutes = Math.floor(offset / TIME_DIFF) % TIME_DIFF;
       const hours = Math.floor(offset / (TIME_DIFF * TIME_DIFF));
-      const currentTime = Math.floor(offset);
 
       const secondsStr = String(seconds).padStart(2, "0");
       const minutesStr = String(minutes).padStart(2, "0");

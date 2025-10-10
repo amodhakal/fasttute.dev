@@ -36,10 +36,10 @@ export default function TranscriptItem({
   const minutesStr = String(minutes).padStart(2, "0");
 
   const sharedClasses =
-    "text-black rounded-lg shadow p-2 text-left transition-colors duration-150 hover:bg-gray-200";
-  const currentClasses = sharedClasses + " bg-gray-200";
+    "w-full rounded-lg shadow p-2 text-left transition-colors duration-150 hover:bg-gray-700";
+  const currentClasses = sharedClasses + " bg-gray-700";
   const notCurrentClasses =
-    sharedClasses + " bg-gray-50 hover:cursor-pointer active:bg-gray-300";
+    sharedClasses + " bg-gray-800 hover:cursor-pointer active:bg-gray-600";
   const isCurrent =
     startTime >= flooredOffset && startTime < flooredOffset + flooredDuration;
 
@@ -55,7 +55,7 @@ export default function TranscriptItem({
       disabled={isCurrent}
       className={isCurrent ? currentClasses : notCurrentClasses}
     >
-      <p className="font-mono text-sm text-gray-600">
+      <p className="font-mono text-sm text-gray-300">
         {hours > 0 && `${hours}:`}
         {minutesStr}:{secondsStr}
       </p>

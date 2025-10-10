@@ -6,12 +6,15 @@ import { api } from "@/server/_generated/api";
 import { useQuery } from "convex/react";
 import { useParams } from "next/navigation";
 import { useRef, useState } from "react";
-import Chat from "./Chat";
-import CompletedSidebar from "./CompletedSidebar";
-import InvalidVideo from "./InvalidVideo";
-import NormalSidebar from "./NormalSidebar";
+import Chat from "./components/Chat";
+import Chapters from "./components/Chapters";
+import Transcripts from "./components/Transcripts";
+import InvalidVideo from "./components/InvalidVideo";
 import { VideoPageContext } from "@/hooks/useVideoPageContext";
 import LoadingPage from "@/components/LoadingPage";
+import { useAuth } from "@clerk/clerk-react";
+import { fetchAction } from "convex/nextjs";
+import Container from "@/components/Container";
 
 export default function VideoPage() {
   const [startTime, setStartTime] = useState(0);
@@ -24,6 +27,9 @@ export default function VideoPage() {
   const playerDivRef = useRef<HTMLDivElement | null>(null);
 
   useYouTubePlayer(video, setStartTime, playerRef, playerDivRef);
+
+  const [activeTab, setActiveTab] = useState("chat");
+  const { userId } = useAuth();
 
   if (video === undefined) {
     return <LoadingPage />;
@@ -42,39 +48,110 @@ export default function VideoPage() {
     }
   };
 
+  const isUserVideoOwner = video.ownerId && video.ownerId === userId;
+
   return (
     <div className="">
       <Header />
-      <div className="md:hidden flex justify-center items-center h-screen w-screen">
-        <p className="font-bold text-2xl">Please use a larger display</p>
-      </div>
-
-      <VideoPageContext.Provider
-        value={{ video, startTime, setStartTime, playerRef, onSeek }}
-      >
-        <div className="hidden md:flex flex-col gap-4 p-4">
-          <div className="grid grid-cols-5 gap-4 w-full max-w-full">
-            <div className="md:col-span-4">
-              <div className="w-full aspect-video md:sticky top-4">
+      <Container className="bg-[#0a0a0a] pt-4 min-h-screen text-neutral-200">
+        <VideoPageContext.Provider
+          value={{ video, startTime, setStartTime, playerRef, onSeek }}
+        >
+          <div className="grid grid-cols-1 xl:grid-cols-4 gap-4">
+            <div className="xl:col-span-3">
+              <div
+                className="sticky top-0 w-full aspect-[16/9] flex flex-col gap-4"
+                style={{ zIndex: 10 }}
+              >
                 <div
                   id="yt-player"
                   ref={playerDivRef}
-                  className="w-full h-full block border-0 rounded-lg"
+                  className="aspect-video w-full h-full block border-0 rounded-lg"
                 />
               </div>
             </div>
-
-            <div className="md:relative md:col-span-1">
-              <div className="md:absolute inset-0 overflow-y-auto flex flex-col gap-2">
-                <NormalSidebar />
-                <CompletedSidebar />
-              </div>
+            <div className="xl:col-span-1">
+              <Sidebar />
             </div>
           </div>
-
-          <Chat />
-        </div>
-      </VideoPageContext.Provider>
+        </VideoPageContext.Provider>
+      </Container>
     </div>
   );
+
+  function Sidebar() {
+    return (
+      <>
+        {video?.status === "pending" && (
+          <div className="rounded-lg shadow p-4 bg-gray-800 mb-2">
+            Enhancing with AI...
+          </div>
+        )}
+        {video?.status === "failed" && (
+          <div className="rounded-lg shadow p-4 bg-gray-800 text-white mb-2 flex gap-4 items-center justify-between">
+            <div>AI enhancement failed due to an error.</div>
+            {isUserVideoOwner && (
+              <button
+                onClick={async () =>
+                  await fetchAction(api.retrieveVideoInfo.regenerate, {
+                    youtubeId: video.youtubeId,
+                  })
+                }
+                className="flex-shrink-0 h-12 px- flex items-center justify-center rounded-lg bg-red-600 transition-all duration-300 hover:bg-red-500 hover:cursor-pointer active:scale-95 disabled:bg-neutral-800 disabled:cursor-not-allowed"
+              >
+                Retry
+              </button>
+            )}
+          </div>
+        )}
+
+        <div className="w-full">
+          <div className="w-full xl:sticky flex">
+            <button
+              className={`px-3 h-10 flex-1 text-center border-b-2  ${
+                activeTab === "chat"
+                  ? " text-red-500 border-gray-500"
+                  : "text-neutral-400 border-gray-800 hover:border-gray-700 hover:cursor-pointer"
+              }`}
+              onClick={() => setActiveTab("chat")}
+            >
+              Chat
+            </button>
+            {video?.status === "completed" && (
+              <button
+                className={`px-3 h-10 flex-1 text-center border-b-2  ${
+                  activeTab === "chapters"
+                    ? " text-red-500 border-gray-500"
+                    : "text-neutral-400 border-gray-800 hover:border-gray-700 hover:cursor-pointer"
+                }`}
+                onClick={() => setActiveTab("chapters")}
+              >
+                Chapters
+              </button>
+            )}
+            <button
+              className={`px-3 h-10 flex-1 text-center border-b-2  ${
+                activeTab === "transcripts"
+                  ? " text-red-500 border-gray-500"
+                  : "text-neutral-400 border-gray-800 hover:border-gray-700 hover:cursor-pointer"
+              }`}
+              onClick={() => setActiveTab("transcripts")}
+            >
+              Transcripts
+            </button>
+            <div className="h-10 w-full border-b-2 border-gray-800">
+            </div>
+          </div>
+        </div>
+
+        <div className="tab-content mt-4 flex-1 overflow-hidden">
+          {activeTab === "chat" && <Chat />}
+          {activeTab === "chapters" && video?.status === "completed" && (
+            <Chapters />
+          )}
+          {activeTab === "transcripts" && <Transcripts />}
+        </div>
+      </>
+    );
+  }
 }
