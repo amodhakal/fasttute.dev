@@ -1,8 +1,8 @@
 ☐ Clean up the transcripts, fixing the grammers and such.
 ☐ Improve the frontend quality to look much better and responsive.
     ✔ Create a much better favicon for GitHub app and the logo @done(25-10-09 18:58)
-    ☐ Fixed the landing page
+    ✔ Fixed the landing page @done(25-10-09 21:19)
+    ✔ When waiting, use the spinning animations. @done(25-10-09 21:19)
     ☐ Build a mobile friendly design similar to what Udemy does.
-    ☐ When waiting, use the spinning animations.
 ☐ Verify with a lower quality model that the question given is relevant.
 ☐ Setup privacy, terms of services, and other things to make the website official (Update this to Google)

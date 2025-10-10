@@ -2,12 +2,18 @@
 
 import LoadingPage from "@/components/LoadingPage";
 import { Suspense } from "react";
-import { LandingPage } from "./LandingPage";
+import LandingPage from "./components/LandingPage";
+import Features from "./components/Features";
+import Footer from "./components/Footer";
 
 export default async function page() {
   return (
     <Suspense fallback={<LoadingPage />}>
-      <LandingPage />
+      <div className="flex flex-col gap-2 xl:gap-8">
+        <LandingPage />
+        <Features />
+        <Footer />
+      </div>
     </Suspense>
   );
 }
