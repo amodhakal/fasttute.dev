@@ -28,7 +28,7 @@ export default function VideoPage() {
 
   useYouTubePlayer(video, setStartTime, playerRef, playerDivRef);
 
-  const [activeTab, setActiveTab] = useState("chat");
+  const [activeTab, setActiveTab] = useState("transcripts");
   const { userId } = useAuth();
 
   if (video === undefined) {
@@ -38,15 +38,6 @@ export default function VideoPage() {
   if (!video) {
     return <InvalidVideo youtubeId={youtubeId?.toString()} />;
   }
-
-  const onSeek = (secs: number) => {
-    const p = playerRef.current;
-    if (p && p.seekTo) {
-      p.seekTo(secs, true);
-    } else {
-      setStartTime(secs);
-    }
-  };
 
   const isUserVideoOwner = video.ownerId && video.ownerId === userId;
 
@@ -97,7 +88,7 @@ export default function VideoPage() {
                     youtubeId: video.youtubeId,
                   })
                 }
-                className="flex-shrink-0 h-12 px- flex items-center justify-center rounded-lg bg-red-600 transition-all duration-300 hover:bg-red-500 hover:cursor-pointer active:scale-95 disabled:bg-neutral-800 disabled:cursor-not-allowed"
+                className="flex-shrink-0 h-12 w-16 px- flex items-center justify-center rounded-lg bg-red-600 transition-all duration-300 hover:bg-red-500 hover:cursor-pointer active:scale-95 disabled:bg-neutral-800 disabled:cursor-not-allowed"
               >
                 Retry
               </button>
@@ -139,8 +130,7 @@ export default function VideoPage() {
             >
               Transcripts
             </button>
-            <div className="h-10 w-full border-b-2 border-gray-800">
-            </div>
+            <div className="h-10 w-full border-b-2 border-gray-800"></div>
           </div>
         </div>
 
@@ -153,5 +143,14 @@ export default function VideoPage() {
         </div>
       </>
     );
+  }
+
+  function onSeek(secs: number) {
+    const p = playerRef.current;
+    if (!p || !p.seekTo) {
+      return;
+    }
+
+    p.seekTo(secs, true);
   }
 }

@@ -54,7 +54,7 @@ export default function Chat() {
       >
         <textarea
           value={question}
-          onChange={(e) => setQuestion(e.target.value)}
+          onChange={handleInputChange}
           placeholder="Have questions about this video? Ask me!"
           className="w-full h-32 md:h-auto py-2 px-4 bg-gray-800 rounded-xl"
           onKeyDown={(e) => {
@@ -193,5 +193,9 @@ export default function Chat() {
       errorToast(error);
       return;
     }
+  }
+
+  async function handleInputChange(e: React.ChangeEvent<HTMLTextAreaElement>) {
+    setQuestion(e.target.value);
   }
 }
