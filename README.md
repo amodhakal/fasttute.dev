@@ -1,4 +1,4 @@
-# fastiture.dev
+# FastTute.dev
 
 Stop scrubbing. Start learning.
 
@@ -17,4 +17,4 @@ This is a waste of time and a massive barrier to effective learning.
 
 ## The Solution
 
-Fasttute is a web application that takes a YouTube URL and generates an interactive, AI-powered learning session. It provides:
+FastTute is a web application that takes a YouTube URL and generates an interactive, AI-powered learning session. It provides:
