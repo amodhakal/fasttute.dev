@@ -1,5 +1,5 @@
 {
-  "name": "meshi",
+  "name": "fasttute",
   "scripts": {
     "dev": "concurrently \"next dev --turbopack\" \"convex dev\"",
     "build": "next build --turbopack",
