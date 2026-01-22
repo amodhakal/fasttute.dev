@@ -11,6 +11,7 @@ import {
 import { api } from "./_generated/api";
 import Innertube from "youtubei.js";
 import { aiVideoProcessingHandler } from "@/utils/ai/chapters";
+import { preconnect } from "react-dom";
 
 export const retrieveVideoInfo = action({
   args: {
@@ -19,7 +20,7 @@ export const retrieveVideoInfo = action({
   },
   handler: async (
     ctx,
-    { youtubeUrlOrId, ownerId }
+    { youtubeUrlOrId, ownerId },
   ): Promise<RetrievalReturn> => {
     try {
       if (!youtubeUrlOrId) {
@@ -38,37 +39,7 @@ export const retrieveVideoInfo = action({
         return { youtubeId, error: null };
       }
 
-      const youtube = await Innertube.create({
-        fetch: (input: RequestInfo | URL, init?: RequestInit) => {
-          type RequestLike = {
-            url?: string;
-            method?: string;
-            headers?: HeadersInit;
-            body?: BodyInit | null;
-          };
-
-          try {
-            const maybeReq = input as unknown;
-            if (
-              maybeReq &&
-              typeof maybeReq === "object" &&
-              "url" in (maybeReq as Record<string, unknown>) &&
-              typeof (maybeReq as Record<string, unknown>).url === "string"
-            ) {
-              const req = maybeReq as RequestLike;
-              const reqInit: RequestInit = {
-                method: req.method,
-                headers: req.headers,
-                body: req.body,
-                ...init,
-              };
-              return globalThis.fetch(req.url as string, reqInit);
-            }
-          } catch {}
-
-          return globalThis.fetch(input as RequestInfo, init);
-        },
-      });
+      const youtube = await Innertube.create();
 
       const info = await youtube.getInfo(youtubeId);
       const videoTitle = info.primary_info?.title.text || "Unknown";
