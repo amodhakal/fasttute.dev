@@ -34,10 +34,10 @@ export default function Chat() {
         <div className="flex flex-col gap-2">
           <p className="">You must be signed in to use AI chat</p>
           <div className="flex w-full gap-4 justify-center">
-            <div className="flex justify-center items-center rounded-xl text-white px-4 py-2 w-full bg-green-600 hover:cursor-pointer hover:bg-green-500 active:bg-green-700">
+            <div className="flex justify-center items-center rounded-xl text-white px-4 py-2 w-full bg-red-600 hover:cursor-pointer hover:bg-red-500 active:bg-red-700">
               <SignInButton />
             </div>
-            <div className="flex justify-center items-center rounded-xl text-white px-4 py-2 w-full bg-green-600 hover:cursor-pointer hover:bg-green-500 active:bg-green-700">
+            <div className="flex justify-center items-center rounded-xl text-white px-4 py-2 w-full bg-red-600 hover:cursor-pointer hover:bg-red-500 active:bg-red-700">
               <SignUpButton />
             </div>
           </div>
