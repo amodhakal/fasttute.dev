@@ -57,7 +57,7 @@ export default function LandingPage() {
           <div className="flex flex-col items-center gap-y-6">
             <h1
               className={
-                "text-4xl sm:text-5xl md:text-7xl font-bold tracking-tighter leading-tight text-white [text-shadow:0_4px_20px_rgba(0,0,0,0.5)] " +
+                "text-4xl sm:text-5xl md:text-7xl font-bold tracking-tighter leading-tight text-white [text-shadow:0_0_5px_theme(colors.white/0.8),_0_0_15px_theme(colors.red.400/0.4)] " +
                 pollerOne.className
               }
             >
@@ -73,7 +73,7 @@ export default function LandingPage() {
           </div>
 
           <form onSubmit={handleValueSubmit} className="w-full max-w-xl">
-            <div className="group relative w-full rounded-xl bg-gradient-to-r from-red-500/50 via-red-500 to-red-500/50 p-[2px] transition-all duration-300 shadow-[0_0_20px_theme(colors.red.500/0.3)] group-hover:shadow-[0_0_40px_theme(colors.red.500/0.5)]">
+            <div className="group relative w-full rounded-xl bg-gradient-to-r from-red-600/50 via-red-600 to-red-600/50 p-[2px] transition-all duration-300 shadow-[0_0_30px_theme(colors.red.600/0.4)] group-hover:shadow-[0_0_50px_theme(colors.red.600/0.6)]">
               <div className="relative flex w-full items-center justify-between rounded-[10px] bg-[#0a0a0a] px-2 py-1">
                 <input
                   value={value}
@@ -133,7 +133,7 @@ export default function LandingPage() {
         <div
           className="pointer-events-none fixed inset-0 z-0 transition duration-300"
           style={{
-            background: `radial-gradient(600px at ${mousePosition.x}px ${mousePosition.y}px, rgba(239, 68, 68, 0.15), transparent 80%)`,
+            background: `radial-gradient(600px at ${mousePosition.x}px ${mousePosition.y}px, rgba(220, 38, 38, 0.2), transparent 80%)`,
           }}
         ></div>
 
