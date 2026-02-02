@@ -2,18 +2,37 @@
 
 import { errorToast } from "@/utils/errorToast";
 import { useAuth } from "@clerk/clerk-react";
-import { FormEvent, useState } from "react";
+import { FormEvent, useEffect, useState } from "react";
 import submitFeedback from "./actions";
 import toast from "react-hot-toast";
-import { redirect } from "next/navigation";
 import Link from "next/link";
 
+export const dynamic = "force-dynamic";
+
 export default function FeedbackPage() {
-  const { userId, isSignedIn } = useAuth();
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  if (!mounted) {
+    return (
+      <div className="min-h-screen w-screen flex justify-center items-center text-white">
+        <p>Loading...</p>
+      </div>
+    );
+  }
+
+  const { userId, isSignedIn, isLoaded } = useAuth();
   const [feedback, setFeedback] = useState("");
 
-  if (!userId || !isSignedIn) {
-    return redirect("/");
+  if (!isSignedIn || !userId) {
+    return (
+      <div className="min-h-screen w-screen flex justify-center items-center text-white">
+        <p>Please sign in to submit feedback</p>
+      </div>
+    );
   }
 
   return (
@@ -23,12 +42,21 @@ export default function FeedbackPage() {
         className="p-6 sm:p-8 rounded-2xl shadow-2xl bg-gray-900 border border-gray-700 flex flex-col items-center gap-6 w-11/12 max-w-md"
       >
         <div className="w-full flex flex-col items-center">
-          <h1 className="text-2xl sm:text-3xl font-extrabold text-red-500 text-center">Submit Feedback</h1>
-          <p className="text-gray-400 text-center text-sm sm:text-base">Your feedback helps us improve our product.</p>
+          <h1 className="text-2xl sm:text-3xl font-extrabold text-red-500 text-center">
+            Submit Feedback
+          </h1>
+          <p className="text-gray-400 text-center text-sm sm:text-base">
+            Your feedback helps us improve our product.
+          </p>
         </div>
 
         <div className="flex flex-col justify-start w-full gap-4">
-          <label htmlFor="feedback" className="text-gray-400 text-sm sm:text-base">Enter Feedback:</label>
+          <label
+            htmlFor="feedback"
+            className="text-gray-400 text-sm sm:text-base"
+          >
+            Enter Feedback:
+          </label>
           <textarea
             value={feedback}
             onChange={(e) => setFeedback(e.target.value)}
@@ -46,7 +74,9 @@ export default function FeedbackPage() {
         </button>
 
         <div className="w-full flex flex-row-reverse text-red-500 hover:cursor-pointer hover:text-red-400 active:text-red-600 text-sm sm:text-base">
-          <Link href="/" className="underline">Go back</Link>
+          <Link href="/" className="underline">
+            Go back
+          </Link>
         </div>
       </form>
     </div>
@@ -60,7 +90,12 @@ export default function FeedbackPage() {
       return;
     }
 
-    await submitFeedback(userId!, feedback);
+    if (!userId) {
+      errorToast("You must be signed in");
+      return;
+    }
+
+    await submitFeedback(userId, feedback);
     toast("Feedback submitted");
   }
 }

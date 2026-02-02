@@ -1,5 +1,3 @@
-import { Id } from "@fasttute/backend/api";
-
 export function getYoutubeId(value: string) {
   if (!value) {
     return null;

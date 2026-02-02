@@ -2,7 +2,7 @@
 
 import Container from "@/components/Container";
 import { pollerOne } from "@/fonts";
-import { api } from "@/server/_generated/api";
+import { api } from "@fasttute/backend/api";
 import { errorToast } from "@/utils/errorToast";
 import { useAuth } from "@clerk/clerk-react";
 import { useAction } from "convex/react";
@@ -10,7 +10,25 @@ import { redirect, useSearchParams } from "next/navigation";
 import { FormEvent, useEffect, useRef, useState } from "react";
 
 export default function LandingPage() {
-  const { userId } = useAuth();
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  if (!mounted) {
+    return (
+      <main className="bg-[#0a0a0a] min-h-[95vh] w-full flex items-center text-neutral-200">
+        <Container>
+          <div className="w-full max-w-3xl mx-auto flex flex-col items-center text-center">
+            <p>Loading...</p>
+          </div>
+        </Container>
+      </main>
+    );
+  }
+
+  const { userId, isLoaded } = useAuth();
   const searchParams = useSearchParams();
 
   const [value, setValue] = useState(searchParams.get("value") || "");
@@ -19,6 +37,18 @@ export default function LandingPage() {
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
   const landingRef = useRef<HTMLDivElement>(null);
   const mainRef = useRef<HTMLDivElement>(null);
+
+  if (!isLoaded) {
+    return (
+      <main className="bg-[#0a0a0a] min-h-[95vh] w-full flex items-center text-neutral-200">
+        <Container>
+          <div className="w-full max-w-3xl mx-auto flex flex-col items-center text-center">
+            <p>Loading...</p>
+          </div>
+        </Container>
+      </main>
+    );
+  }
 
   useEffect(() => {
     function handleMouseMove(event: MouseEvent) {

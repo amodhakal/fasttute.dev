@@ -7,7 +7,7 @@ export const vTranscript = () =>
       text: v.string(),
       offset: v.number(),
       duration: v.number(),
-    })
+    }),
   );
 
 export const vChapters = () =>
@@ -15,15 +15,11 @@ export const vChapters = () =>
     v.object({
       title: v.string(),
       offset: v.number(),
-    })
+    }),
   );
 
 export const vStatus = () =>
-  v.union(
-    v.literal("pending"), //
-    v.literal("completed"),
-    v.literal("failed")
-  );
+  v.union(v.literal("pending"), v.literal("completed"), v.literal("failed"));
 
 export const videoInfo = defineTable({
   ownerId: v.optional(v.string()),

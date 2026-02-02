@@ -1,5 +1,5 @@
 import { YTPlayer } from "@/hooks/useYoutubePlayer";
-import { Doc } from "@/server/_generated/dataModel";
+import { Doc } from "@fasttute/backend/api";
 import {
   createContext,
   Dispatch,
@@ -17,7 +17,7 @@ export interface VideoPageContextType {
 }
 
 export const VideoPageContext = createContext<VideoPageContextType | null>(
-  null
+  null,
 );
 
 export function useVideoPageContext() {

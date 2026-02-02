@@ -1,9 +1,19 @@
-import { api } from "@/server/_generated/api";
-import type { Doc } from "@/server/_generated/dataModel";
+import type { GenericDocument } from "convex/server";
 import { GenerateContentConfig, GoogleGenAI } from "@google/genai";
-import { fetchMutation } from "convex/nextjs";
 
-export async function aiVideoProcessingHandler(video: Doc<"video_info">) {
+type VideoInfo = GenericDocument & {
+  _id: string;
+  transcript: Array<{ text: string; offset: number; duration: number }>;
+  youtubeId: string;
+  title: string;
+  status: string;
+  chapters?: Array<{ title: string; offset: number }>;
+};
+
+export async function aiVideoProcessingHandler(
+  video: VideoInfo,
+  runMutation: <Args>(name: string, args: Args) => Promise<void>,
+) {
   const { model, config, getContents } = geminiConfig;
   const GEMINI_KEY = process.env.GEMINI_KEY;
   if (!GEMINI_KEY) {
@@ -25,7 +35,7 @@ export async function aiVideoProcessingHandler(video: Doc<"video_info">) {
 
   const chapters = JSON.parse(response.text);
 
-  await fetchMutation(api.videoInfo.updateWithNewValues, {
+  await runMutation("videoInfo:updateWithNewValues", {
     chapters,
     id: video._id,
     status: "completed",

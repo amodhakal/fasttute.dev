@@ -1,4 +1,4 @@
-import ConvexClientProvider from "@/components/ConvexClientProvider";
+import { ConvexClientProvider } from "@fasttute/backend/react";
 import { spaceGrotesk } from "@/fonts";
 import type { Metadata } from "next";
 import "./globals.css";
@@ -60,7 +60,12 @@ export default function RootLayout({
       <body
         className={`${spaceGrotesk.className} antialiased bg-black text-gray-300`}
       >
-        <ConvexClientProvider>{children}</ConvexClientProvider>
+        <ConvexClientProvider
+          convexUrl={process.env.NEXT_PUBLIC_CONVEX_URL!}
+          clerkPublishableKey={process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY!}
+        >
+          {children}
+        </ConvexClientProvider>
       </body>
     </html>
   );

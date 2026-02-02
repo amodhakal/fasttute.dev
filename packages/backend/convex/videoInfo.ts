@@ -1,18 +1,13 @@
-/**
- * Based on https://github.com/youtube-transcript-plus/youtube-transcript-api
- */
-
 import { v } from "convex/values";
 import { action, mutation, query } from "./_generated/server";
 import { vChapters, vStatus, vTranscript } from "./schema/videoInfo";
-import { api } from "./_generated/api";
-import { aiVideoProcessingHandler } from "@/utils/ai/chapters";
+import { aiVideoProcessingHandler } from "../utils/ai/chapters";
 import {
   getTranscriptValuesFromSegment,
   getYoutubeId,
   handleError,
   RetrievalReturn,
-} from "@/utils/transcript";
+} from "../utils/transcript";
 import Innertube from "youtubei.js";
 
 export const getIdFromYoutubeId = query({

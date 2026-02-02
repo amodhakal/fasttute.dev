@@ -1,17 +1,16 @@
 "use node";
 
 import { v } from "convex/values";
+import { api } from "./_generated/api";
 import { action } from "./_generated/server";
 import {
   getTranscriptValuesFromSegment,
   getYoutubeId,
   handleError,
   RetrievalReturn,
-} from "@/utils/transcript";
-import { api } from "./_generated/api";
+} from "../utils/transcript";
 import Innertube from "youtubei.js";
-import { aiVideoProcessingHandler } from "@/utils/ai/chapters";
-import { preconnect } from "react-dom";
+import { aiVideoProcessingHandler } from "../utils/ai/chapters";
 
 export const retrieveVideoInfo = action({
   args: {
@@ -79,7 +78,7 @@ export const processWithAI = action({
     }
 
     try {
-      await aiVideoProcessingHandler(video);
+      await aiVideoProcessingHandler(video, ctx.runMutation as any);
     } catch (err) {
       console.error(err);
       await ctx.runMutation(api.videoInfo.updateStatus, {

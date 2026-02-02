@@ -1,7 +1,7 @@
 "use client";
 
 import { useVideoPageContext } from "@/hooks/useVideoPageContext";
-import { api } from "@/server/_generated/api";
+import { api } from "@fasttute/backend/api";
 import { errorToast } from "@/utils/errorToast";
 import { SignInButton, SignUpButton, useAuth } from "@clerk/clerk-react";
 import { useQuery } from "convex/react";
@@ -185,7 +185,7 @@ export default function Chat() {
       copiedQuestion,
       userId!,
       video._id,
-      video.transcript
+      video.transcript,
     );
 
     setIsChatProcessing(false);

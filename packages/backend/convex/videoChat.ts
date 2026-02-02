@@ -1,4 +1,4 @@
-import { aiQnAHandler } from "@/utils/ai/qna";
+import { aiQnAHandler } from "../utils/ai/qna";
 import { v } from "convex/values";
 import { api } from "./_generated/api";
 import { action, mutation, query } from "./_generated/server";
@@ -18,13 +18,13 @@ export const handleAskedQuestion = action({
       {
         userId,
         videoId,
-      }
+      },
     );
 
     const chatLength = foundChats.length;
     if (chatLength > 1) {
       throw new Error(
-        `Multiple chats: ${foundChats.map((item) => item._id)} for video: ${videoId}, user: ${userId}`
+        `Multiple chats: ${foundChats.map((item) => item._id)} for video: ${videoId}, user: ${userId}`,
       );
     }
 
@@ -94,7 +94,7 @@ export const pushChunkToModelChat = mutation({
 
     if (!currentModelMessage) {
       throw new Error(
-        `Received chat id: ${chatId} has no current model message`
+        `Received chat id: ${chatId} has no current model message`,
       );
     }
 
@@ -104,7 +104,7 @@ export const pushChunkToModelChat = mutation({
 
     if (currentModelMessage.id !== responseId) {
       throw new Error(
-        `Received chat id: ${chatId} has unequal response id and current model message id`
+        `Received chat id: ${chatId} has unequal response id and current model message id`,
       );
     }
 

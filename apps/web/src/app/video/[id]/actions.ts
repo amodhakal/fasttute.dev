@@ -1,14 +1,13 @@
 "use server";
 
-import { api } from "@/server/_generated/api";
-import { Doc } from "@/server/_generated/dataModel";
+import { api } from "@fasttute/backend/api";
 import { fetchAction, fetchMutation } from "convex/nextjs";
 
 export async function askQuestion(
   question: string,
   userId: string,
-  videoId: Doc<"video_info">["_id"],
-  transcript: Doc<"video_info">["transcript"]
+  videoId: any,
+  transcript: any,
 ) {
   try {
     await fetchAction(api.videoChat.handleAskedQuestion, {
@@ -25,10 +24,7 @@ export async function askQuestion(
   }
 }
 
-export async function clearChat(
-  userId: string,
-  videoId: Doc<"video_info">["_id"]
-) {
+export async function clearChat(userId: string, videoId: any) {
   try {
     await fetchMutation(api.videoChat.deleteChat, { videoId, userId });
     return { error: null };

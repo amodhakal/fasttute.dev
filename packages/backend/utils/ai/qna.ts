@@ -1,4 +1,3 @@
-import { Doc } from "@/server/_generated/dataModel";
 import {
   Content,
   GenerateContentConfig,
@@ -7,9 +6,25 @@ import {
   HarmCategory,
 } from "@google/genai";
 
+type ChatMessage = {
+  id: string;
+  role: "User" | "Model";
+  text: string;
+};
+
+type VideoInfo = {
+  _id: string;
+  transcript: Array<{ text: string; offset: number; duration: number }>;
+};
+
+type VideoChat = {
+  _id: string;
+  chat: ChatMessage[];
+};
+
 export function aiQnAHandler(
-  previousChat: Doc<"video_chat">["chat"],
-  transcript: Doc<"video_info">["transcript"]
+  previousChat: VideoChat["chat"],
+  transcript: VideoInfo["transcript"],
 ) {
   const { model, config, getContents } = geminiConfig;
 
@@ -38,19 +53,19 @@ export const geminiConfig = {
     safetySettings: [
       {
         category: HarmCategory.HARM_CATEGORY_HARASSMENT,
-        threshold: HarmBlockThreshold.BLOCK_LOW_AND_ABOVE, // Block most
+        threshold: HarmBlockThreshold.BLOCK_LOW_AND_ABOVE,
       },
       {
         category: HarmCategory.HARM_CATEGORY_HATE_SPEECH,
-        threshold: HarmBlockThreshold.BLOCK_LOW_AND_ABOVE, // Block most
+        threshold: HarmBlockThreshold.BLOCK_LOW_AND_ABOVE,
       },
       {
         category: HarmCategory.HARM_CATEGORY_SEXUALLY_EXPLICIT,
-        threshold: HarmBlockThreshold.BLOCK_LOW_AND_ABOVE, // Block most
+        threshold: HarmBlockThreshold.BLOCK_LOW_AND_ABOVE,
       },
       {
         category: HarmCategory.HARM_CATEGORY_DANGEROUS_CONTENT,
-        threshold: HarmBlockThreshold.BLOCK_LOW_AND_ABOVE, // Block most
+        threshold: HarmBlockThreshold.BLOCK_LOW_AND_ABOVE,
       },
     ],
     systemInstruction: [
@@ -72,8 +87,8 @@ export const geminiConfig = {
     ],
   } satisfies GenerateContentConfig,
   getContents: (
-    transcript: Doc<"video_info">["transcript"],
-    previousChat: Doc<"video_chat">["chat"]
+    transcript: VideoInfo["transcript"],
+    previousChat: VideoChat["chat"],
   ): Content[] => {
     const formattedTranscript = transcript
       .map((item) => `[[${item.offset}]] ${item.text}`)
@@ -87,7 +102,7 @@ export const geminiConfig = {
     const lastUserQuestion = chatHistory.pop();
     if (!lastUserQuestion || lastUserQuestion.role !== "user") {
       throw new Error(
-        "The last item in the chat history must be the user's question."
+        "The last item in the chat history must be the user's question.",
       );
     }
 

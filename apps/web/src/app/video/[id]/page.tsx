@@ -2,7 +2,7 @@
 
 import Header from "@/components/Header";
 import { useYouTubePlayer, YTPlayer } from "@/hooks/useYoutubePlayer";
-import { api } from "@/server/_generated/api";
+import { api } from "@fasttute/backend/api";
 import { useQuery } from "convex/react";
 import { useParams } from "next/navigation";
 import { useRef, useState } from "react";

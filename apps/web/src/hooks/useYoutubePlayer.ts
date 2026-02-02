@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
-import { Doc } from "@/server/_generated/dataModel";
+import { Doc } from "@fasttute/backend/api";
 import { useEffect } from "react";
 
 export type YTPlayer = {
@@ -13,7 +13,7 @@ export function useYouTubePlayer(
   video: Doc<"video_info"> | null | undefined,
   setStartTime: (n: number) => void,
   playerRef: React.RefObject<YTPlayer | null>,
-  playerDivRef: React.RefObject<HTMLDivElement | null>
+  playerDivRef: React.RefObject<HTMLDivElement | null>,
 ) {
   useEffect(() => {
     if (!video || !playerDivRef.current) {
@@ -37,7 +37,9 @@ export function useYouTubePlayer(
         } catch {}
       }
 
-      playerRef.current = new (window as any).YT.Player(playerDivRef.current, {
+      (playerRef as React.MutableRefObject<YTPlayer | null>).current = new (
+        window as any
+      ).YT.Player(playerDivRef.current, {
         videoId,
         events: {},
         playerVars: {
@@ -56,7 +58,7 @@ export function useYouTubePlayer(
         } catch {}
       }
 
-      playerRef.current = null;
+      (playerRef as React.MutableRefObject<YTPlayer | null>).current = null;
     };
 
     function loadAPI() {
@@ -66,7 +68,7 @@ export function useYouTubePlayer(
         }
 
         const existing = document.querySelector(
-          'script[src="https://www.youtube.com/iframe_api"]'
+          'script[src="https://www.youtube.com/iframe_api"]',
         );
         if (!existing) {
           const tag = document.createElement("script");
@@ -87,7 +89,7 @@ export function useYouTubePlayer(
       if (p && typeof p.getCurrentTime === "function") {
         try {
           const secs = Math.floor(
-            (p.getCurrentTime && p.getCurrentTime()) || 0
+            (p.getCurrentTime && p.getCurrentTime()) || 0,
           );
           setStartTime(secs);
         } catch {}
