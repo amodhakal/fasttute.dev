@@ -18,8 +18,9 @@ Fully responsive design built with Tailwind CSS for seamless learning across all
 
 ## Tech Stack
 
-- **Framework:** Next.js 15 (App Router) with Turbopack
-- **Backend:** Convex (real-time database + serverless functions)
+- **Monorepo:** Turborepo with Bun workspaces
+- **Framework:** Next.js 16 (App Router) with Turbopack
+- **Backend:** Convex as shared package (`@fasttute/backend`)
 - **Authentication:** Clerk
 - **AI Models:** Google Gemini (`gemini-2.5-pro` for Q&A, `gemini-2.5-flash-lite` for chapter generation)
 - **Styling:** Tailwind CSS 4
@@ -30,29 +31,29 @@ Fully responsive design built with Tailwind CSS for seamless learning across all
 ## Project Structure
 
 ```
-src/
-├── app/                    # Next.js routes and page components
-│   ├── page.tsx           # Landing page with video URL input
-│   └── video/[id]/        # Main video interaction interface
-├── components/            # Reusable UI components
-├── hooks/                 # Custom React hooks for player state management
-├── server/                # Convex backend logic
-│   ├── schema.ts         # Database schema definitions
-│   └── retrieveVideoInfo.ts  # YouTube data fetching
-├── utils/
-│   ├── ai/               # AI service integrations
-│   │   ├── qna.ts       # Streaming Q&A responses
-│   │   └── chapters.ts  # Video segmentation processing
-│   └── ...              # Helper functions
-└── fonts.ts              # Typography configuration
+fasttute.dev/
+├── apps/
+│   └── web/                    # Next.js frontend
+│       ├── src/app/            # Routes and pages
+│       │   ├── page.tsx        # Landing page
+│       │   └── video/[id]/     # Video interaction interface
+│       ├── src/components/     # Reusable UI components
+│       ├── src/hooks/          # React hooks for player state
+│       └── src/utils/          # Helper functions
+├── packages/
+│   └── backend/                # Shared Convex backend
+│       ├── convex/             # Database & serverless functions
+│       ├── utils/ai/           # AI services (Q&A, chapters)
+│       └── api/                # API exports
+├── turbo.json                  # Turborepo configuration
+└── package.json                # Root monorepo config
 ```
 
 ## Getting Started
 
 ### Prerequisites
 
-- Node.js 20+
-- npm or yarn
+- Bun 1.3.5+
 - Convex account
 - Clerk account
 - Google Gemini API key
@@ -72,19 +73,22 @@ CLERK_JWT_ISSUER_DOMAIN=your_clerk_jwt_issuer
 
 ```bash
 # Install dependencies
-npm install
+bun install
 
 # Run development servers (Next.js + Convex)
-npm run dev
+bun run dev
 
 # Build for production
-npm run build
+bun run build
 
 # Start production server
-npm start
+bun run start
 
 # Run linter
-npm run lint
+bun run lint
+
+# Type check all packages
+bun run check-types
 ```
 
 The application will be available at `http://localhost:3000` (default Next.js port).
