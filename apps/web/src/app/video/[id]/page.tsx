@@ -1,9 +1,13 @@
 "use client";
 
 import Header from "@/components/Header";
-import { useYouTubePlayer, YTPlayer } from "@/hooks/useYoutubePlayer";
+import {
+  useYouTubePlayer,
+  YTPlayer,
+  SkipSegment,
+} from "@/hooks/useYoutubePlayer";
 import { api } from "@fasttute/backend/api";
-import { useQuery } from "convex/react";
+import { useQuery, useAction } from "convex/react";
 import { useParams } from "next/navigation";
 import { useRef, useState } from "react";
 import Chat from "./components/Chat";
@@ -18,15 +22,49 @@ import Container from "@/components/Container";
 
 export default function VideoPage() {
   const [startTime, setStartTime] = useState(0);
+  const [focusMode, setFocusMode] = useState(false);
+  const [focusLoading, setFocusLoading] = useState(false);
   const { id: youtubeId } = useParams();
   const video = useQuery(api.videoInfo.getVideo, {
     youtubeId: youtubeId?.toString(),
   });
 
+  const focusSegments = useQuery(
+    api.focus.getFocusSegments,
+    video?._id ? { videoId: video._id } : "skip",
+  );
+
+  const generateFocusSegments = useAction(
+    api.focus.generateFocusSegmentsForVideo,
+  );
+
+  const handleFocusToggle = async () => {
+    if (focusMode) {
+      setFocusMode(false);
+      return;
+    }
+
+    if (!video?._id) return;
+
+    if (!focusSegments || focusSegments.length === 0) {
+      setFocusLoading(true);
+      try {
+        await generateFocusSegments({ videoId: video._id });
+      } catch (e) {
+        console.error("Failed to generate focus segments:", e);
+      }
+      setFocusLoading(false);
+    }
+    setFocusMode(true);
+  };
+
   const playerRef = useRef<YTPlayer | null>(null);
   const playerDivRef = useRef<HTMLDivElement | null>(null);
 
-  useYouTubePlayer(video, setStartTime, playerRef, playerDivRef);
+  const skipSegments: SkipSegment[] =
+    focusMode && focusSegments ? focusSegments : [];
+
+  useYouTubePlayer(video, setStartTime, playerRef, playerDivRef, skipSegments);
 
   const [activeTab, setActiveTab] = useState("transcripts");
   const { userId } = useAuth();
@@ -54,6 +92,23 @@ export default function VideoPage() {
                 className="sticky top-0 w-full aspect-[16/9] flex flex-col gap-4"
                 style={{ zIndex: 10 }}
               >
+                <div className="flex justify-end">
+                  <button
+                    onClick={handleFocusToggle}
+                    disabled={focusLoading}
+                    className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-all ${
+                      focusMode
+                        ? "bg-red-600 text-white"
+                        : "bg-gray-800 text-gray-300 hover:bg-gray-700"
+                    } disabled:opacity-50`}
+                  >
+                    {focusLoading
+                      ? "Analyzing..."
+                      : focusMode
+                        ? "Focus Mode On"
+                        : "Focus Mode"}
+                  </button>
+                </div>
                 <div
                   id="yt-player"
                   ref={playerDivRef}

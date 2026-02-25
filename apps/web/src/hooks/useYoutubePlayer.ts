@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
 import { Doc } from "@fasttute/backend/api";
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 
 export type YTPlayer = {
   seekTo?: (seconds: number, allowSeekAhead?: boolean) => void;
@@ -9,12 +9,21 @@ export type YTPlayer = {
   destroy?: () => void;
 };
 
+export type SkipSegment = {
+  startOffset: number;
+  endOffset: number;
+  reason: string;
+};
+
 export function useYouTubePlayer(
   video: Doc<"video_info"> | null | undefined,
   setStartTime: (n: number) => void,
   playerRef: React.RefObject<YTPlayer | null>,
   playerDivRef: React.RefObject<HTMLDivElement | null>,
+  skipSegments: SkipSegment[] = [],
 ) {
+  const lastSkippedRef = useRef<number>(0);
+
   useEffect(() => {
     if (!video || !playerDivRef.current) {
       return;
@@ -92,9 +101,24 @@ export function useYouTubePlayer(
             (p.getCurrentTime && p.getCurrentTime()) || 0,
           );
           setStartTime(secs);
+
+          if (skipSegments.length > 0) {
+            const currentSegment = skipSegments.find(
+              (seg) => secs >= seg.startOffset && secs < seg.endOffset,
+            );
+            if (currentSegment && secs > lastSkippedRef.current) {
+              lastSkippedRef.current = currentSegment.endOffset;
+              if (p.seekTo) {
+                p.seekTo(currentSegment.endOffset, true);
+              }
+            }
+            if (secs >= currentSegment?.endOffset) {
+              lastSkippedRef.current = secs;
+            }
+          }
         } catch {}
       }
     }, 1000);
     return () => clearInterval(t);
-  }, [setStartTime, playerRef]);
+  }, [setStartTime, playerRef, skipSegments]);
 }
