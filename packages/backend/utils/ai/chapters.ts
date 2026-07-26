@@ -1,5 +1,6 @@
 import type { GenericDocument } from "convex/server";
 import { GenerateContentConfig, GoogleGenAI } from "@google/genai";
+import { processTranscriptEmbeddings } from "./rag";
 
 type VideoInfo = GenericDocument & {
   _id: string;
@@ -40,6 +41,13 @@ export async function aiVideoProcessingHandler(
     id: video._id,
     status: "completed",
   });
+
+  // Process and store transcript embeddings for RAG search
+  try {
+    await processTranscriptEmbeddings(video._id, video.transcript, runMutation);
+  } catch (err) {
+    console.error("Failed to process transcript embeddings:", err);
+  }
 }
 
 export const geminiConfig = {
