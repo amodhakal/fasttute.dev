@@ -22,7 +22,6 @@ export default function Chat() {
     userId: userId || "Not received",
   });
 
-  console.log(allChats);
   const chat =
     allChats && allChats?.length > 0
       ? allChats[0].chat.map((item) => item)
